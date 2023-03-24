@@ -1,4 +1,4 @@
-# Import required packages
+import io
 import cv2
 import pytesseract
 from dateutil.parser import parse
@@ -34,8 +34,15 @@ def find_addresses(full_text_array):
     # parse the image text as one big blob and 
         fulltext = " ".join(full_text_array)
         return pyap.parse(fulltext, country='US')
+
+def string_includes_month(string):
+    months_array = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    if any(ext in string for ext in months_array):
+        return string
     
 def find_date(text_line):
+    non_slash_date_array = []
+
     # check if there is a slash in the text line
     if "/" in text_line and is_date(text_line):
         if " " in text_line:
@@ -46,13 +53,31 @@ def find_date(text_line):
         else:
             return sub_item
         
+    # check if it's amazon-style date "March 15, 2023"
+    if string_includes_month(text_line) and "," in text_line and "shipped" not in text_line.lower() and "transactions" not in text_line:
+        non_slash_date_array.clear()
+        non_slash_date_string = ""
+        text_line_no_comma = text_line.replace(',', '')
+        split_date = text_line_no_comma.split()
+
+        print(split_date)
+        for sub_item in split_date:
+            if string_includes_month(sub_item) or sub_item.isnumeric():
+                non_slash_date_array.append(sub_item)
+                non_slash_date_string = " ".join(non_slash_date_array)
+        
+        return non_slash_date_string
+
+
+
+        
 # basically just looks for the highest float it can find in the text blob
 # not very sophisticated right now
 def find_total(text_line,max_total_list):
         split_sub_item = text_line.split()
         for sub_item in split_sub_item:
-            if sub_item[0].isnumeric() and sub_item[-1].isnumeric() and "." in sub_item:
-                max_total_list.append(float(sub_item))
+            if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
+                max_total_list.append(float(sub_item.strip("$")))
     
     
 def serialize_parsed_image_text(image_text):
@@ -63,24 +88,33 @@ def serialize_parsed_image_text(image_text):
     if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
         for text_line in full_text_array:
             if text_line != "":
-                receipt_date = find_date(text_line)
+                print(receipt_date)
                 find_total(text_line,max_total_list)
+
+                if not find_date(text_line) == None:
+                    print('ran')
+                    receipt_date = find_date(text_line)
+
+
+
         
-    
+        
         addresses = find_addresses(full_text_array)
 
-        serialized_object = {
+        if not addresses:
+            return {
+            "Date2_af_date" : receipt_date,
+            "Text1" : max(max_total_list)
+        }
+        else:
+            return {
             "ADDRESS": addresses[0].as_dict()['full_street'],
             "CITY": addresses[0].as_dict()['city'],
             "STATE": addresses[0].as_dict()['region1'],
             "ZIP" : addresses[0].as_dict()['postal_code'],
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list)
-        }
-
-        print(serialized_object)
-        return serialized_object
-    
+        } 
 
 def parse_image(image_file):
     # each text string will be appended to this list to be serialized later
@@ -151,17 +185,17 @@ def parse_image(image_file):
     return serialize_parsed_image_text(text_list)
 
 def parse_pdf(pdf_file):
+    document = io.BytesIO(pdf_file)
     # creating a pdf reader object
-    reader = PyPDF2.PdfReader(pdf_file)
-
-    # print the number of pages in pdf file
-    print(len(reader.pages))
+    reader = PyPDF2.PdfReader(document)
 
     # print the text of the first page
-    print(reader.pages[0].extract_text())
+    pdf_text = reader.pages[0].extract_text()
+    # print(pdf_text)
+
+    return serialize_parsed_image_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
-    print(immutable_dict)
     fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
@@ -181,13 +215,10 @@ def serialize_form_object(immutable_dict):
         serialized_object['Dropdown3'] = " -".join(split_value)
         
     
-    print(serialized_object)
     return serialized_object
     
 
 def create_pdf_po_document(immutable_dict):
-        print(immutable_dict)
-        print("\n")
         fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialize_form_object(immutable_dict))
 
 
