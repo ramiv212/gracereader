@@ -1,11 +1,11 @@
 import os
 from flask import Flask, flash, request, redirect, url_for,render_template,send_file
 from werkzeug.utils import secure_filename
-from gracereader import parse_image,create_pdf_po_document
+from gracereader import process_as_image_or_pdf,create_pdf_po_document
 import json
 
 UPLOAD_FOLDER = '/uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 
 
 # TODO make sure all HTML field names match PDF field names
@@ -15,6 +15,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 # TODO get find AMEX and fill it in automatically if found
 # TODO automatically get today's date
 # TODO mobile version
+# TODO move labels for radio buttons to after radio
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -28,7 +29,7 @@ def hello_world():
 
     if request.method == 'POST':
         f = request.files.get('receipt')
-        response_object = parse_image(f)
+        response_object = process_as_image_or_pdf(f)
 
     return render_template('index.html', response_object = response_object, title="TITLE")
 
