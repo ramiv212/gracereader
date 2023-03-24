@@ -14,11 +14,13 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
 
+    response_object = {}
+
     if request.method == 'POST':
         f = request.files.get('receipt')
-        parse_image(f)
+        response_object = parse_image(f)
 
-    return render_template('index.html')
+    return render_template('index.html', return_object = response_object, title="TITLE")
 
 
 if __name__ == '__main__':

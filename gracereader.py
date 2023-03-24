@@ -6,7 +6,9 @@ import numpy as np
 import pyap
 import PyPDF2
 
-# reader = PyPDF2.PdfReader('sample7.pdf')
+# reader = PyPDF2.PdfReader()
+
+from fillpdf import fillpdfs
 
 # print(reader.pages[0].extract_text())
 
@@ -37,6 +39,10 @@ def serialize_parsed_image_text(image_text):
 
     maxTotalList = []
 
+    address = ""
+
+    receipt_date = ""
+
     if 'TOTAL' in text or 'DEBIT' in text or 'Total' in text:
         textList = text.splitlines()
 
@@ -44,7 +50,13 @@ def serialize_parsed_image_text(image_text):
             if item != "":
                 # find date
                 if "/" in item and is_date(item):
-                    print(item)
+                    if " " in item:
+                        split_date = item.split()
+                        for sub_item in split_date:
+                            if "/" in sub_item:
+                                receipt_date = sub_item
+                    else:
+                        receipt_date = item 
 
                 # find total (highest float number)
                 split_sub_item = item.split()
@@ -52,13 +64,25 @@ def serialize_parsed_image_text(image_text):
                     if sub_item[0].isnumeric() and sub_item[-1].isnumeric() and "." in sub_item:
                         maxTotalList.append(float(sub_item))
 
-        print(max(maxTotalList))
-
         fulltext = " ".join(textList)
 
         addreses = pyap.parse(fulltext, country='US')
+        print(addreses)
 
-        print(addreses[0].as_dict())
+        serialized_object = {
+            "ADDRESS": addreses[0].as_dict()['full_street'],
+            "CITY": addreses[0].as_dict()['city'],
+            "STATE": addreses[0].as_dict()['region1'],
+            "ZIP" : addreses[0].as_dict()['postal_code'],
+            "Date1_af_date" : receipt_date,
+            "Text1" : max(maxTotalList)
+        }
+
+        print(serialized_object)
+
+        fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialized_object)
+
+        return serialized_object
     
 
 def parse_image(image_file):
@@ -126,4 +150,4 @@ def parse_image(image_file):
             # Close the file
             # file.close
     
-    serialize_parsed_image_text(text_list)
+    return serialize_parsed_image_text(text_list)
