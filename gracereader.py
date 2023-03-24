@@ -68,14 +68,11 @@ def serialize_parsed_image_text(image_text):
             "CITY": addreses[0].as_dict()['city'],
             "STATE": addreses[0].as_dict()['region1'],
             "ZIP" : addreses[0].as_dict()['postal_code'],
-            "Date1_af_date" : receipt_date,
+            "Date2_af_date" : receipt_date,
             "Text1" : max(maxTotalList)
         }
 
         print(serialized_object)
-
-        fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
-        fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialized_object)
 
         return serialized_object
     
@@ -146,3 +143,16 @@ def parse_image(image_file):
             # file.close
     
     return serialize_parsed_image_text(text_list)
+
+def serialize_form_object(immutable_dict):
+    fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
+    serialized_object = {}
+    for field in immutable_dict:
+        serialized_object[field] = immutable_dict[field]
+    
+    return serialized_object
+    
+
+def create_pdf_po_document(immutable_dict):
+        print(immutable_dict)
+        fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialize_form_object(immutable_dict))

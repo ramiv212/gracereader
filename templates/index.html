@@ -62,7 +62,7 @@
         <div id="form-grid">
           <div id="col1">
             <label for="date">Date</label>
-            <input type="text" id="date" name="date" />
+            <input type="text" id="Date1_af_date" name="Date1_af_date" value="{{ response_object['Date1_af_date'] }}"/>
 
             <div>
               <label for="dept-name">Dept Name</label>
@@ -134,21 +134,21 @@
               </div>
 
               <div>
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" value="{{ response_object['ADDRESS'] }}"/>
+                <label for="address">ADDRESS</label>
+                <input type="text" id="ADDRESS" name="ADDRESS" value="{{ response_object['ADDRESS'] }}"/>
               </div>
 
               <div>
-                <label for="city">City</label>
-                <input type="text" id="city" name="city" value="{{ response_object['CITY'] }}"/>
+                <label for="city">CITY</label>
+                <input type="text" id="CITY" name="CITY" value="{{ response_object['CITY'] }}"/>
               </div>
 
               <div>
-                <label for="state">State</label>
-                <input type="text" id="state" name="state" value="{{ response_object['STATE'] }}"/>
+                <label for="STATE">State</label>
+                <input type="text" id="STATE" name="STATE" value="{{ response_object['STATE'] }}"/>
 
-                <label for="state">Zip</label>
-                <input type="text" id="zip" name="zip" value="{{ response_object['ZIP'] }}"/>
+                <label for="ZIP">Zip</label>
+                <input type="text" id="ZIP" name="ZIP" value="{{ response_object['ZIP'] }}"/>
               </div>
             </div>
           </div>
@@ -265,14 +265,14 @@
               <div>Receipt Date</div>
 
               <div style="display: flex; flex-direction: column;">
-                <input type="text" id="Date1_af_date" name="Date1_af_date" value="{{ response_object['Date1_af_date'] }}"/>
-                <input type="text" id="Date2_af_date" name="Date2_af_date" />
+                <input type="text" id="Date2_af_date" name="Date2_af_date" value="{{ response_object['Date2_af_date'] }}"/>
                 <input type="text" id="Date3_af_date" name="Date3_af_date" />
                 <input type="text" id="Date4_af_date" name="Date4_af_date" />
                 <input type="text" id="Date5_af_date" name="Date5_af_date" />
                 <input type="text" id="Date6_af_date" name="Date6_af_date" />
                 <input type="text" id="Date7_af_date" name="Date7_af_date" />
                 <input type="text" id="Date8_af_date" name="Date8_af_date" />
+                <input type="text" id="Date9_af_date" name="Date9_af_date" />
               </div>
             </div>
 
@@ -310,7 +310,7 @@
 
         <div>
             Total
-            <input type="text" id="total" name="total" value="{{ response_object['Text1'] }}"/>
+            <input type="text" id="Text1" name="Text1" value="{{ response_object['Text1'] }}"/>
         </div>
 
         </div>
