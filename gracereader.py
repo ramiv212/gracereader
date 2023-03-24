@@ -4,13 +4,9 @@ import pytesseract
 from dateutil.parser import parse
 import numpy as np
 import pyap
-import PyPDF2
-
-# reader = PyPDF2.PdfReader()
-
 from fillpdf import fillpdfs
 
-# print(reader.pages[0].extract_text())
+VENDOR_NAMES = ['amazon','walmart']
 
 def is_date(string, fuzzy=False):
     """
@@ -38,8 +34,6 @@ def serialize_parsed_image_text(image_text):
     text = image_text
 
     maxTotalList = []
-
-    address = ""
 
     receipt_date = ""
 
@@ -80,6 +74,7 @@ def serialize_parsed_image_text(image_text):
 
         print(serialized_object)
 
+        fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
         fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialized_object)
 
         return serialized_object
