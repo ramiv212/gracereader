@@ -61,12 +61,15 @@
       <form method="post" action="/renderform">
         <div id="form-grid">
           <div id="col1">
+            <label for="date">Number</label>
+            <input type="text" id="NUMBER" name="NUMBER" value="{{ response_object['NUMBER'] }}"/>
+
             <label for="date">Date</label>
             <input type="text" id="Date1_af_date" name="Date1_af_date" value="{{ response_object['Date1_af_date'] }}"/>
 
             <div>
-              <label for="dept-name">Dept Name</label>
-              <select id="dept-name" name="dept-name">
+              <label for="Dropdown2">Dept Name</label>
+              <select id="Dropdown2" name="Dropdown2">
                 <option disabled selected>Choose One</option>
                 <option>Cafe</option>
                 <option>Car Shows</option>
@@ -95,10 +98,10 @@
                 <option>SE - Youth Mission Trip</option>
                 <option>SE - Other</option>
               </select>
-              <label for="account">Account</label>
-              <select>
+              <label for="Dropdown3">Account</label>
+              <select id="Dropdown3" name="Dropdown3">
                 <option disabled selected>Choose One</option>
-                <option>Dept Budgets - Computer Oper</option>
+                <option>Dept Budgets&nbsp;&nbsp;- Computer Oper</option>
                 <option>Dept Budgets - Dues & Subscriptions</option>
                 <option>Dept Budgets - Florist</option>
                 <option>Dept Budgets - Gifts</option>
@@ -119,27 +122,27 @@
             </div>
             <div style="display: flex; flex-direction: column">
               <div>
-                <label for="date">Event</label>
-                <input type="text" id="event" name="event" />
+                <label for="EVENT">Event</label>
+                <input type="text" id="EVENT" name="EVENT" />
               </div>
 
               <div>
-                <label for="requested-by">Requested By</label>
-                <input type="text" id="requested-by" name="requested-by" />
+                <label for="ORDERED BY">Requested By</label>
+                <input type="text" id="ORDERED BY" name="ORDERED BY" value="{{ response_object['ORDERED BY'] }}"/>
               </div>
 
               <div>
-                <label for="vendor-name">Vendor Name</label>
-                <input type="text" id="vendor-name" name="vendor-name" />
+                <label for="VENDOR NAME">Vendor Name</label>
+                <input type="text" id="VENDOR NAME" name="VENDOR NAME" value="{{ response_object['VENDOR NAME'] }}"/>
               </div>
 
               <div>
-                <label for="address">ADDRESS</label>
+                <label for="address">Address</label>
                 <input type="text" id="ADDRESS" name="ADDRESS" value="{{ response_object['ADDRESS'] }}"/>
               </div>
 
               <div>
-                <label for="city">CITY</label>
+                <label for="city">City</label>
                 <input type="text" id="CITY" name="CITY" value="{{ response_object['CITY'] }}"/>
               </div>
 
@@ -161,7 +164,7 @@
                 type="radio"
                 id="amex"
                 name="billing-method"
-                value="amex"
+                value="Check Box10"
               />
             </div>
 
@@ -171,7 +174,7 @@
                 type="radio"
                 id="reimb-ck"
                 name="billing-method"
-                value="reimb-ck"
+                value="Check Box11"
               />
             </div>
 
@@ -181,7 +184,7 @@
                 type="radio"
                 id="advance-ck"
                 name="billing-method"
-                value="advance-ck"
+                value="Check Box12"
               />
             </div>
 
@@ -191,7 +194,7 @@
                 type="radio"
                 id="petty-cash"
                 name="billing-method"
-                value="petty-cash"
+                value="Check Box13"
               />
             </div>
 
@@ -201,7 +204,7 @@
                 type="radio"
                 id="on-acct"
                 name="billing-method"
-                value="on-acct"
+                value="Check Box14"
               />
             </div>
 
@@ -211,13 +214,14 @@
                 type="radio"
                 id="transfer-funds"
                 name="billing-method"
-                value="transfer-funds"
+                value="Check Box15"
               />
             </div>
 
             <div>
+                <input type="radio" id="other-radio" name="billing-method" value="Check Box21" />
               <label for="other">Other</label>
-              <input type="text" id="other" name="other" />
+              <input type="text" id="other-radio" name="Text22" />
             </div>
           </div>
 
@@ -226,7 +230,7 @@
 
             <div>
               <label for="amex">Mail CK</label>
-              <input type="radio" id="mail-ck" name="carrier" value="mail-ck" />
+              <input type="radio" id="mail-ck" name="carrier" value="Check Box17" />
             </div>
 
             <div>
@@ -235,7 +239,7 @@
                 type="radio"
                 id="fedex-ck"
                 name="carrier"
-                value="fedex-ck"
+                value="Check Box18"
               />
             </div>
 
@@ -245,7 +249,7 @@
                 type="radio"
                 id="vendor-pickup-ck"
                 name="carrier"
-                value="vendor-pickup-ck"
+                value="Check Box19"
               />
             </div>
 
@@ -255,8 +259,9 @@
                 type="radio"
                 id="give-ck-to"
                 name="carrier"
-                value="give-ck-to"
+                value="Check Box20"
               />
+              <input type="text" id="give-ck-field" name="1"/>
             </div>
           </div>
 
@@ -266,13 +271,13 @@
 
               <div style="display: flex; flex-direction: column;">
                 <input type="text" id="Date2_af_date" name="Date2_af_date" value="{{ response_object['Date2_af_date'] }}"/>
-                <input type="text" id="Date3_af_date" name="Date3_af_date" />
-                <input type="text" id="Date4_af_date" name="Date4_af_date" />
-                <input type="text" id="Date5_af_date" name="Date5_af_date" />
-                <input type="text" id="Date6_af_date" name="Date6_af_date" />
-                <input type="text" id="Date7_af_date" name="Date7_af_date" />
-                <input type="text" id="Date8_af_date" name="Date8_af_date" />
-                <input type="text" id="Date9_af_date" name="Date9_af_date" />
+                <input type="text" id="Date3_af_date" name="Date3_af_date" value="{{ response_object['Date3_af_date'] }}"/>
+                <input type="text" id="Date4_af_date" name="Date4_af_date" value="{{ response_object['Date4_af_date'] }}"/>
+                <input type="text" id="Date5_af_date" name="Date5_af_date" value="{{ response_object['Date5_af_date'] }}"/>
+                <input type="text" id="Date6_af_date" name="Date6_af_date" value="{{ response_object['Date6_af_date'] }}"/>
+                <input type="text" id="Date7_af_date" name="Date7_af_date" value="{{ response_object['Date7_af_date'] }}"/>
+                <input type="text" id="Date8_af_date" name="Date8_af_date" value="{{ response_object['Date8_af_date'] }}"/>
+                <input type="text" id="Date9_af_date" name="Date9_af_date" value="{{ response_object['Date9_af_date'] }}"/>
               </div>
             </div>
 
@@ -280,14 +285,14 @@
                 <div>Description</div>
 
                 <div style="display: flex; flex-direction: column;">
-                    <input type="text" id="DESCRIPTIONRow1" name="DESCRIPTIONRow1" />
-                    <input type="text" id="DESCRIPTIONRow2" name="DESCRIPTIONRow2" />
-                    <input type="text" id="DESCRIPTIONRow3" name="DESCRIPTIONRow3" />
-                    <input type="text" id="DESCRIPTIONRow4" name="DESCRIPTIONRow4" />
-                    <input type="text" id="DESCRIPTIONRow5" name="DESCRIPTIONRow5" />
-                    <input type="text" id="DESCRIPTIONRow6" name="DESCRIPTIONRow6" />
-                    <input type="text" id="DESCRIPTIONRow7" name="DESCRIPTIONRow7" />
-                    <input type="text" id="DESCRIPTIONRow8" name="DESCRIPTIONRow8" />
+                    <input type="text" id="DESCRIPTIONRow1" name="DESCRIPTIONRow1" value="{{ response_object['DESCRIPTIONRow1'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow2" name="DESCRIPTIONRow2" value="{{ response_object['DESCRIPTIONRow2'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow3" name="DESCRIPTIONRow3" value="{{ response_object['DESCRIPTIONRow3'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow4" name="DESCRIPTIONRow4" value="{{ response_object['DESCRIPTIONRow4'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow5" name="DESCRIPTIONRow5" value="{{ response_object['DESCRIPTIONRow5'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow6" name="DESCRIPTIONRow6" value="{{ response_object['DESCRIPTIONRow6'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow7" name="DESCRIPTIONRow7" value="{{ response_object['DESCRIPTIONRow7'] }}"/>
+                    <input type="text" id="DESCRIPTIONRow8" name="DESCRIPTIONRow8" value="{{ response_object['DESCRIPTIONRow8'] }}"/>
                   </div>
             </div>
 
@@ -296,13 +301,13 @@
 
                 <div style="display: flex; flex-direction: column;">
                     <input type="text" id="AMOUNTRow1" name="AMOUNTRow1" value="{{ response_object['Text1'] }}"/>
-                    <input type="text" id="AMOUNTRow2" name="AMOUNTRow2" />
-                    <input type="text" id="AMOUNTRow3" name="AMOUNTRow3" />
-                    <input type="text" id="AMOUNTRow4" name="AMOUNTRow4" />
-                    <input type="text" id="AMOUNTRow5" name="AMOUNTRow5" />
-                    <input type="text" id="AMOUNTRow6" name="AMOUNTRow6" />
-                    <input type="text" id="AMOUNTRow7" name="AMOUNTRow7" />
-                    <input type="text" id="AMOUNTRow8" name="AMOUNTRow8" />
+                    <input type="text" id="AMOUNTRow2" name="AMOUNTRow2" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow3" name="AMOUNTRow3" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow4" name="AMOUNTRow4" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow5" name="AMOUNTRow5" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow6" name="AMOUNTRow6" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow7" name="AMOUNTRow7" value="{{ response_object['AMOUNTRow2'] }}"/>
+                    <input type="text" id="AMOUNTRow8" name="AMOUNTRow8" value="{{ response_object['AMOUNTRow2'] }}"/>
                   </div>
             </div>
 

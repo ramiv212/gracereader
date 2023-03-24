@@ -8,10 +8,13 @@ UPLOAD_FOLDER = '/uploads'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 
+# TODO make sure all HTML field names match PDF field names
+# TODO fix all frontend and backend validation
 # TODO add a different name for each downloaded PO
 # TODO remember the options you fill in for name, dept, account
 # TODO get find AMEX and fill it in automatically if found
 # TODO automatically get today's date
+# TODO mobile version
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

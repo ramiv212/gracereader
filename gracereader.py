@@ -61,7 +61,7 @@ def serialize_parsed_image_text(image_text):
         fulltext = " ".join(textList)
 
         addreses = pyap.parse(fulltext, country='US')
-        print(addreses)
+        # print(addreses)
 
         serialized_object = {
             "ADDRESS": addreses[0].as_dict()['full_street'],
@@ -72,7 +72,7 @@ def serialize_parsed_image_text(image_text):
             "Text1" : max(maxTotalList)
         }
 
-        print(serialized_object)
+        # print(serialized_object)
 
         return serialized_object
     
@@ -149,10 +149,26 @@ def serialize_form_object(immutable_dict):
     serialized_object = {}
     for field in immutable_dict:
         serialized_object[field] = immutable_dict[field]
+
+    # billing method checkbox
+    if immutable_dict['billing-method']:
+        serialized_object[immutable_dict['billing-method']] = "Yes"
+
+    # carrier checkbox
+    if immutable_dict['carrier']:
+        serialized_object[immutable_dict['carrier']] = "Yes"
+
+    # add space to account field
+    if immutable_dict['Dropdown3']:
+        split_value = immutable_dict['Dropdown3'].split("-")
+        serialized_object['Dropdown3'] = " -".join(split_value)
+        
     
+    print(serialized_object)
     return serialized_object
     
 
 def create_pdf_po_document(immutable_dict):
         print(immutable_dict)
+        print("\n")
         fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialize_form_object(immutable_dict))
