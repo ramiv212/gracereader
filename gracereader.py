@@ -6,6 +6,7 @@ import numpy as np
 import pyap
 from fillpdf import fillpdfs
 import PyPDF2
+from datetime import date
 
 VENDOR_NAMES = ['amazon','walmart']
 
@@ -118,6 +119,7 @@ def serialize_parsed_text(image_text):
             "CITY": addresses[0].as_dict()['city'],
             "STATE": addresses[0].as_dict()['region1'],
             "ZIP" : addresses[0].as_dict()['postal_code'],
+            "Date1_af_date" : date.today().strftime("%m/%d/%y"),
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list),
             "Check Box10": is_amex_purchase
