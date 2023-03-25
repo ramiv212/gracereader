@@ -165,6 +165,9 @@
                 id="amex"
                 name="billing-method"
                 value="Check Box10"
+                {% if response_object['Check Box10'] %}
+                checked="checked"
+                {% endif %}
               />
             </div>
 
@@ -323,6 +326,6 @@
         <button type="submit">Render</button>
       </form>
     </div>
-    <span>{{ return_object }}</span>
+    <span>{{ response_object }} Test</span>
   </body>
 </html>

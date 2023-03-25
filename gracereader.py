@@ -78,33 +78,39 @@ def find_total(text_line,max_total_list):
         for sub_item in split_sub_item:
             if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
                 max_total_list.append(float(sub_item.strip("$")))
+
+
+def find_amex_purchase(text_line):
+    print(text_line)
+    if "amex" in text_line.lower() or "american express" in text_line.lower():
+        return True
     
-    
-def serialize_parsed_image_text(image_text):
+def serialize_parsed_text(image_text):
     full_text_array = image_text.splitlines()
+    addresses = find_addresses(full_text_array)
     receipt_date = ""
     max_total_list = []
+    is_amex_purchase = False
 
     if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
         for text_line in full_text_array:
             if text_line != "":
-                print(receipt_date)
                 find_total(text_line,max_total_list)
 
+                if find_amex_purchase(text_line):
+                    is_amex_purchase = True
+
+                # fix this later. It returns none because this is being searched for overe every line of text
                 if not find_date(text_line) == None:
                     print('ran')
                     receipt_date = find_date(text_line)
-
-
-
         
-        
-        addresses = find_addresses(full_text_array)
 
         if not addresses:
             return {
             "Date2_af_date" : receipt_date,
-            "Text1" : max(max_total_list)
+            "Text1" : max(max_total_list),
+            "Check Box10": is_amex_purchase
         }
         else:
             return {
@@ -113,7 +119,8 @@ def serialize_parsed_image_text(image_text):
             "STATE": addresses[0].as_dict()['region1'],
             "ZIP" : addresses[0].as_dict()['postal_code'],
             "Date2_af_date" : receipt_date,
-            "Text1" : max(max_total_list)
+            "Text1" : max(max_total_list),
+            "Check Box10": is_amex_purchase
         } 
 
 def parse_image(image_file):
@@ -172,17 +179,8 @@ def parse_image(image_file):
         text = pytesseract.image_to_string(cropped)
 
         text_list = text_list + text
-        
-        # Appending the text into file
-        # file.write(text)
-        # file.write("\n")
-        
-        # Close the file
-        # file.close
-
-        # works here so far
     
-    return serialize_parsed_image_text(text_list)
+    return serialize_parsed_text(text_list)
 
 def parse_pdf(pdf_file):
     document = io.BytesIO(pdf_file)
@@ -193,9 +191,10 @@ def parse_pdf(pdf_file):
     pdf_text = reader.pages[0].extract_text()
     # print(pdf_text)
 
-    return serialize_parsed_image_text(pdf_text)
+    return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
+    print(immutable_dict)
     fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
