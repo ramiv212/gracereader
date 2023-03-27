@@ -1,0 +1,119 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm margin20">
+      Billing Method
+      <div>
+        <input type="radio" id="amex" name="billing-method" value="Check Box10"
+        {% if response_object['Check Box10'] %} checked="checked" {% endif %} />
+        <label for="amex">AMEX</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="reimb-ck"
+          name="billing-method"
+          value="Check Box11"
+        />
+        <label for="reimb-ck">Reimb CK</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="advance-ck"
+          name="billing-method"
+          value="Check Box12"
+        />
+        <label for="advance-ck">Advance CK</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="petty-cash"
+          name="billing-method"
+          value="Check Box13"
+        />
+        <label for="petty-cash">Petty Cash</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="on-acct"
+          name="billing-method"
+          value="Check Box14"
+        />
+        <label for="on-acct">On Acct</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="transfer-funds"
+          name="billing-method"
+          value="Check Box15"
+        />
+        <label for="transfer-funds">Transfer Funds</label>
+      </div>
+
+      <div>
+        <input
+          type="radio"
+          id="other-radio"
+          name="billing-method"
+          value="Check Box21"
+        />
+        <label for="other">Other</label>
+        <input type="text" id="other-radio" name="Text22" />
+      </div>
+    </div>
+    <div class="col-sm margin20">
+
+    Carrier
+
+    <div>
+      <input
+        type="radio"
+        id="mail-ck"
+        name="carrier"
+        value="Check Box17"
+      />
+      <label for="amex">Mail CK</label>
+    </div>
+
+    <div>
+      <input
+        type="radio"
+        id="fedex-ck"
+        name="carrier"
+        value="Check Box18"
+      />
+      <label for="amex">Fedex CK</label>
+    </div>
+
+    <div>
+      <input
+        type="radio"
+        id="vendor-pickup-ck"
+        name="carrier"
+        value="Check Box19"
+      />
+      <label for="amex">Vendor Pickup CK</label>
+    </div>
+
+    <div>
+      <input
+        type="radio"
+        id="give-ck-to"
+        name="carrier"
+        value="Check Box20"
+      />
+      <label for="amex">Give CK To</label>
+      <input type="text" id="give-ck-field" name="1" />
+    </div>
+  
+    </div>
+  </div>
+</div>

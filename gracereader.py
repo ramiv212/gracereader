@@ -51,8 +51,8 @@ def find_date(text_line):
             for sub_item in split_date:
                 if "/" in sub_item:
                     return sub_item
-        else:
-            return sub_item
+            else:
+                return sub_item
         
     # check if it's amazon-style date "March 15, 2023"
     if string_includes_month(text_line) and "," in text_line and "shipped" not in text_line.lower() and "transactions" not in text_line:
@@ -61,7 +61,6 @@ def find_date(text_line):
         text_line_no_comma = text_line.replace(',', '')
         split_date = text_line_no_comma.split()
 
-        print(split_date)
         for sub_item in split_date:
             if string_includes_month(sub_item) or sub_item.isnumeric():
                 non_slash_date_array.append(sub_item)
@@ -82,16 +81,26 @@ def find_total(text_line,max_total_list):
 
 
 def find_amex_purchase(text_line):
-    print(text_line)
     if "amex" in text_line.lower() or "american express" in text_line.lower():
         return True
     
+def find_vendors(text_line):
+    # if vendor name is in the text line
+    if any(ext in text_line.lower() for ext in VENDOR_NAMES):
+        split_text_line = text_line.split(" ")
+        for sub_text_item in split_text_line:
+            for vendor in VENDOR_NAMES:
+                if vendor in sub_text_item.lower():
+                    return vendor.capitalize()
+    
 def serialize_parsed_text(image_text):
+    print(image_text)
     full_text_array = image_text.splitlines()
     addresses = find_addresses(full_text_array)
     receipt_date = ""
     max_total_list = []
     is_amex_purchase = False
+    vendor_name = ""
 
     if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
         for text_line in full_text_array:
@@ -103,18 +112,22 @@ def serialize_parsed_text(image_text):
 
                 # fix this later. It returns none because this is being searched for overe every line of text
                 if not find_date(text_line) == None:
-                    print('ran')
                     receipt_date = find_date(text_line)
+                
+                if find_vendors(text_line):
+                    vendor_name = find_vendors(text_line)
         
 
         if not addresses:
             return {
+            "VENDOR NAME": vendor_name,
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list),
             "Check Box10": is_amex_purchase
         }
         else:
             return {
+            "VENDOR NAME": vendor_name,
             "ADDRESS": addresses[0].as_dict()['full_street'],
             "CITY": addresses[0].as_dict()['city'],
             "STATE": addresses[0].as_dict()['region1'],
@@ -157,9 +170,9 @@ def parse_image(image_file):
     im2 = img.copy()
     
     # A text file is created and flushed
-    file = open("recognized.txt", "w+")
-    file.write("")
-    file.close()
+    # file = open("recognized.txt", "w+")
+    # file.write("")
+    # file.close()
     
     # Looping through the identified contours
     # Then rectangular part is cropped and passed on
@@ -189,14 +202,12 @@ def parse_pdf(pdf_file):
     # creating a pdf reader object
     reader = PyPDF2.PdfReader(document)
 
-    # print the text of the first page
+    # get the text of the first page
     pdf_text = reader.pages[0].extract_text()
-    # print(pdf_text)
 
     return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
-    print(immutable_dict)
     fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
@@ -229,4 +240,5 @@ def process_as_image_or_pdf(file):
     if file_extension_is_image(filename):
         return parse_image(read_file)
     else:
+        print(parse_pdf(read_file))
         return parse_pdf(read_file)

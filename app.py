@@ -15,6 +15,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO mobile version / responsive
 # TODO move labels for radio buttons to after radio
 # TODO name the file something different when exporting, delete after download
+# TODO add validation when button is pushed without a selected file
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

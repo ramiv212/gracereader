@@ -1,0 +1,213 @@
+<div class="container margin20" style="max-width: 450px; min-width:350px;">
+  <div class="row">
+    <div class="col-sm">
+      <label for="date">Number</label>
+    </div>
+
+    <div class="col-sm">
+      <input
+        type="text"
+        id="NUMBER"
+        name="NUMBER"
+        value="{{ response_object['NUMBER'] }}"
+      />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm">
+      <label for="date">Date</label>
+    </div>
+
+    <div class="col-sm">
+      <input
+        type="text"
+        id="Date1_af_date"
+        name="Date1_af_date"
+        value="{{ response_object['Date1_af_date'] }}"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="container margin20">
+  <div class="row">
+    <div class="col-sm">
+      <label for="Dropdown2">Dept Name</label>
+      <select id="Dropdown2" name="Dropdown2">
+        <option disabled selected>Choose One</option>
+        <option>Cafe</option>
+        <option>Car Shows</option>
+        <option>Communications</option>
+        <option>Family Life</option>
+        <option>General Fund</option>
+        <option>Grace Garage</option>
+        <option>Grace Latino Ministries</option>
+        <option>Groups</option>
+        <option>Guest Services</option>
+        <option>Kids</option>
+        <option>Men's Ministries</option>
+        <option>Pastoral Care</option>
+        <option>Prayer</option>
+        <option>Primetime</option>
+        <option>Special Projects</option>
+        <option>Tech</option>
+        <option>Women's Ministries</option>
+        <option>Worship</option>
+        <option>Young Adults</option>
+        <option>Youth</option>
+        <option>SE - Kid's Camp</option>
+        <option>SE - Merry and Bright</option>
+        <option>SE - Youth Camp</option>
+        <option>SE - Youth Merch.</option>
+        <option>SE - Youth Mission Trip</option>
+        <option>SE - Other</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm">
+      <label for="Dropdown3">Account</label>
+      <select id="Dropdown3" name="Dropdown3">
+        <option disabled selected>Choose One</option>
+        <option>Dept Budgets&nbsp;&nbsp;- Computer Oper</option>
+        <option>Dept Budgets - Dues & Subscriptions</option>
+        <option>Dept Budgets - Florist</option>
+        <option>Dept Budgets - Gifts</option>
+        <option>Dept Budgets - Honorarium</option>
+        <option>Dept Budgets - Mat. & Supplies</option>
+        <option>Dept Budgets - Meals</option>
+        <option>Dept Budgets - Office Supplies</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <option>Dept Budgets -</option>
+        <!-- add the rest later -->
+      </select>
+    </div>
+  </div>
+
+  <div class="container margin20">
+    <div class="row">
+      <div class="col-sm">
+        <label for="EVENT" style="grid-column-start: 1; grid-row-start: 1"
+          >Event</label
+        >
+      </div>
+      <div class="col-sm-auto">
+        <input
+          type="text"
+          id="EVENT"
+          name="EVENT"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="ORDERED BY" style="grid-column-start: 1; grid-row-start: 2"
+          >Requested By</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="ORDERED BY"
+          name="ORDERED BY"
+          value="{{ response_object['ORDERED BY'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="VENDOR NAME" style="grid-column-start: 1; grid-row-start: 3"
+          >Vendor Name</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="VENDOR NAME"
+          name="VENDOR NAME"
+          value="{{ response_object['VENDOR NAME'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="address" style="grid-column-start: 1; grid-row-start: 4"
+          >Address</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="ADDRESS"
+          name="ADDRESS"
+          value="{{ response_object['ADDRESS'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="city" style="grid-column-start: 1; grid-row-start: 5"
+          >City</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="CITY"
+          name="CITY"
+          value="{{ response_object['CITY'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="STATE" style="grid-column-start: 1; grid-row-start: 6"
+          >State</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="STATE"
+          name="STATE"
+          value="{{ response_object['STATE'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <label for="ZIP" style="grid-column-start: 1; grid-row-start: 7"
+          >Zip</label
+        >
+      </div>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          id="ZIP"
+          name="ZIP"
+          value="{{ response_object['ZIP'] }}"
+          style="width: 100%"
+        />
+      </div>
+    </div>
+  </div>
+</div>

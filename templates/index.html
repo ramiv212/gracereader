@@ -5,14 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Grace PO Creator</title>
-
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
+        body {
+            background-color: rgb(27,44,91);
+        }
       #app {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        height: 100vh;
+        background-color: white;
+        margin: auto;
       }
 
       label {
@@ -23,46 +28,15 @@
         margin: 5px;
       }
 
-      #form-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-        grid-gap: 20px;
-      }
-
-      #col1 {
-        grid-column-start: 1;
-        grid-row-start: 1;
-      }
-
-      #col2 {
-        grid-column-start: 2;
-        grid-row-start: 1;
-      }
-
-      #col3 {
-        grid-column-start: 1;
-        grid-column-end: 3;
-
-        grid-column-start: 3;
-        grid-row-start: 1;
-      }
-
-      #row2col1 {
-        grid-row-start: 2;
-        grid-row-end: 3;
-      }
-
-      #left-side-grid {
-        display: grid;
-        grid-template-columns: repeat(2,1fr);
-        grid-template-columns: repeat(7,1fr);
+      .margin20 {
         margin-top: 20px;
+        margin-bottom: 20px;
       }
+
     </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="container">
       <form method="post" enctype="multipart/form-data">
         <input
           type="file"
@@ -73,431 +47,38 @@
         <h1>{{ title }}</h1>
       </form>
 
+    <div class="container">
       <form method="post" action="/renderform">
-        <div id="form-grid">
-          <div id="col1">
-            <label for="date">Number</label>
-            <input
-              type="text"
-              id="NUMBER"
-              name="NUMBER"
-              value="{{ response_object['NUMBER'] }}"
-            />
-
-            <label for="date">Date</label>
-            <input
-              type="text"
-              id="Date1_af_date"
-              name="Date1_af_date"
-              value="{{ response_object['Date1_af_date'] }}"
-            />
-
-            <div>
-              <label for="Dropdown2">Dept Name</label>
-              <select id="Dropdown2" name="Dropdown2">
-                <option disabled selected>Choose One</option>
-                <option>Cafe</option>
-                <option>Car Shows</option>
-                <option>Communications</option>
-                <option>Family Life</option>
-                <option>General Fund</option>
-                <option>Grace Garage</option>
-                <option>Grace Latino Ministries</option>
-                <option>Groups</option>
-                <option>Guest Services</option>
-                <option>Kids</option>
-                <option>Men's Ministries</option>
-                <option>Pastoral Care</option>
-                <option>Prayer</option>
-                <option>Primetime</option>
-                <option>Special Projects</option>
-                <option>Tech</option>
-                <option>Women's Ministries</option>
-                <option>Worship</option>
-                <option>Young Adults</option>
-                <option>Youth</option>
-                <option>SE - Kid's Camp</option>
-                <option>SE - Merry and Bright</option>
-                <option>SE - Youth Camp</option>
-                <option>SE - Youth Merch.</option>
-                <option>SE - Youth Mission Trip</option>
-                <option>SE - Other</option>
-              </select>
-              <label for="Dropdown3">Account</label>
-              <select id="Dropdown3" name="Dropdown3">
-                <option disabled selected>Choose One</option>
-                <option>Dept Budgets&nbsp;&nbsp;- Computer Oper</option>
-                <option>Dept Budgets - Dues & Subscriptions</option>
-                <option>Dept Budgets - Florist</option>
-                <option>Dept Budgets - Gifts</option>
-                <option>Dept Budgets - Honorarium</option>
-                <option>Dept Budgets - Mat. & Supplies</option>
-                <option>Dept Budgets - Meals</option>
-                <option>Dept Budgets - Office Supplies</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <option>Dept Budgets -</option>
-                <!-- add the rest later -->
-              </select>
-            </div>
-            <div id="left-side-grid">
-                <label for="EVENT"       style="grid-column-start: 1; grid-row-start: 1;">Event</label>
-                <label for="ORDERED BY"  style="grid-column-start: 1; grid-row-start: 2;">Requested By</label>
-                <label for="VENDOR NAME" style="grid-column-start: 1; grid-row-start: 3;">Vendor Name</label>
-                <label for="address"     style="grid-column-start: 1; grid-row-start: 4;">Address</label>
-                <label for="city"        style="grid-column-start: 1; grid-row-start: 5;">City</label>
-                <label for="STATE"       style="grid-column-start: 1; grid-row-start: 6;">State</label>
-                <label for="ZIP"         style="grid-column-start: 1; grid-row-start: 7;">Zip</label>
-
-              <input type="text" id="EVENT" name="EVENT" style="grid-column-start: 2; grid-row-start: 1;" />
-
-                <input
-                  type="text"
-                  id="ORDERED BY"
-                  name="ORDERED BY"
-                  value="{{ response_object['ORDERED BY'] }}"
-                  style="grid-column-start: 2; grid-row-start: 2;"
-                />
-                <input
-                  type="text"
-                  id="VENDOR NAME"
-                  name="VENDOR NAME"
-                  value="{{ response_object['VENDOR NAME'] }}"
-                  style="grid-column-start: 2; grid-row-start: 3;"
-                />
-                <input
-                  type="text"
-                  id="ADDRESS"
-                  name="ADDRESS"
-                  value="{{ response_object['ADDRESS'] }}"
-                  style="grid-column-start: 2; grid-row-start: 4;"
-                />
-                <input
-                  type="text"
-                  id="CITY"
-                  name="CITY"
-                  value="{{ response_object['CITY'] }}"
-                  style="grid-column-start: 2; grid-row-start: 5;"
-                />
-                <input
-                  type="text"
-                  id="STATE"
-                  name="STATE"
-                  value="{{ response_object['STATE'] }}"
-                  style="grid-column-start: 2; grid-row-start: 6;"
-                />
-                <input
-                  type="text"
-                  id="ZIP"
-                  name="ZIP"
-                  value="{{ response_object['ZIP'] }}"
-                  style="grid-column-start: 2; grid-row-start: 7;"
-                />
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column" id="col2">
-            Billing Method
-            <div>
-              <input type="radio" id="amex" name="billing-method" value="Check
-              Box10" {% if response_object['Check Box10'] %} checked="checked"
-              {% endif %} />
-              <label for="amex">AMEX</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="reimb-ck"
-                name="billing-method"
-                value="Check Box11"
-              />
-              <label for="reimb-ck">Reimb CK</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="advance-ck"
-                name="billing-method"
-                value="Check Box12"
-              />
-              <label for="advance-ck">Advance CK</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="petty-cash"
-                name="billing-method"
-                value="Check Box13"
-              />
-              <label for="petty-cash">Petty Cash</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="on-acct"
-                name="billing-method"
-                value="Check Box14"
-              />
-              <label for="on-acct">On Acct</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="transfer-funds"
-                name="billing-method"
-                value="Check Box15"
-              />
-              <label for="transfer-funds">Transfer Funds</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="other-radio"
-                name="billing-method"
-                value="Check Box21"
-              />
-              <label for="other">Other</label>
-              <input type="text" id="other-radio" name="Text22" />
-            </div>
-          </div>
-
-          <div id="col3">
-            Carrier
-
-            <div>
-              <input
-                type="radio"
-                id="mail-ck"
-                name="carrier"
-                value="Check Box17"
-              />
-              <label for="amex">Mail CK</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="fedex-ck"
-                name="carrier"
-                value="Check Box18"
-              />
-              <label for="amex">Fedex CK</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="vendor-pickup-ck"
-                name="carrier"
-                value="Check Box19"
-              />
-              <label for="amex">Vendor Pickup CK</label>
-            </div>
-
-            <div>
-              <input
-                type="radio"
-                id="give-ck-to"
-                name="carrier"
-                value="Check Box20"
-              />
-              <label for="amex">Give CK To</label>
-              <input type="text" id="give-ck-field" name="1" />
-            </div>
-          </div>
-
-          <div id="row2col1" style="display: flex">
-            <div>
-              <div>Receipt Date</div>
-
-              <div style="display: flex; flex-direction: column">
-                <input
-                  type="text"
-                  id="Date2_af_date"
-                  name="Date2_af_date"
-                  value="{{ response_object['Date2_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date3_af_date"
-                  name="Date3_af_date"
-                  value="{{ response_object['Date3_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date4_af_date"
-                  name="Date4_af_date"
-                  value="{{ response_object['Date4_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date5_af_date"
-                  name="Date5_af_date"
-                  value="{{ response_object['Date5_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date6_af_date"
-                  name="Date6_af_date"
-                  value="{{ response_object['Date6_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date7_af_date"
-                  name="Date7_af_date"
-                  value="{{ response_object['Date7_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date8_af_date"
-                  name="Date8_af_date"
-                  value="{{ response_object['Date8_af_date'] }}"
-                />
-                <input
-                  type="text"
-                  id="Date9_af_date"
-                  name="Date9_af_date"
-                  value="{{ response_object['Date9_af_date'] }}"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div>Description</div>
-
-              <div style="display: flex; flex-direction: column">
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow1"
-                  name="DESCRIPTIONRow1"
-                  value="{{ response_object['DESCRIPTIONRow1'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow2"
-                  name="DESCRIPTIONRow2"
-                  value="{{ response_object['DESCRIPTIONRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow3"
-                  name="DESCRIPTIONRow3"
-                  value="{{ response_object['DESCRIPTIONRow3'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow4"
-                  name="DESCRIPTIONRow4"
-                  value="{{ response_object['DESCRIPTIONRow4'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow5"
-                  name="DESCRIPTIONRow5"
-                  value="{{ response_object['DESCRIPTIONRow5'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow6"
-                  name="DESCRIPTIONRow6"
-                  value="{{ response_object['DESCRIPTIONRow6'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow7"
-                  name="DESCRIPTIONRow7"
-                  value="{{ response_object['DESCRIPTIONRow7'] }}"
-                />
-                <input
-                  type="text"
-                  id="DESCRIPTIONRow8"
-                  name="DESCRIPTIONRow8"
-                  value="{{ response_object['DESCRIPTIONRow8'] }}"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div>Amount</div>
-
-              <div style="display: flex; flex-direction: column">
-                <input
-                  type="text"
-                  id="AMOUNTRow1"
-                  name="AMOUNTRow1"
-                  value="{{ response_object['Text1'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow2"
-                  name="AMOUNTRow2"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow3"
-                  name="AMOUNTRow3"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow4"
-                  name="AMOUNTRow4"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow5"
-                  name="AMOUNTRow5"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow6"
-                  name="AMOUNTRow6"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow7"
-                  name="AMOUNTRow7"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-                <input
-                  type="text"
-                  id="AMOUNTRow8"
-                  name="AMOUNTRow8"
-                  value="{{ response_object['AMOUNTRow2'] }}"
-                />
-              </div>
-            </div>
-          </div>
-
+      <div class="row">
+        <div class="col-sm">
+            {% include 'section1.html' %}
+        </div>
+        <div class="col-sm" style="display: flex;">
+            {% include 'section2.html' %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm">
           <div>
-            Total
-            <input
-              type="text"
-              id="Text1"
-              name="Text1"
-              value="{{ response_object['Text1'] }}"
-            />
+          {% include 'section4.html' %}
           </div>
         </div>
+        
+      </div>
 
-        <button type="submit">Render</button>
-      </form>
+            
+
+            {% include 'section5.html' %}
+
+          <button type="submit">Render</button>
+        </form>
+      </div>
     </div>
     <span>{{ response_object }} Test</span>
+
+    <!-- bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </body>
 </html>
