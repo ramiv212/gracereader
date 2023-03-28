@@ -208,6 +208,7 @@ def parse_pdf(pdf_file):
     return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
+    print(immutable_dict)
     fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
@@ -225,7 +226,6 @@ def serialize_form_object(immutable_dict):
     if immutable_dict['Dropdown3']:
         split_value = immutable_dict['Dropdown3'].split("-")
         serialized_object['Dropdown3'] = " -".join(split_value)
-        
     
     return serialized_object
     

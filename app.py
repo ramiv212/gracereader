@@ -10,12 +10,12 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO refactor the date finding logic
 # TODO make sure all HTML field names match PDF field names
 # TODO fix all frontend and backend validation
-# TODO remember the options you fill in for name, dept, account
-# TODO get find AMEX and fill it in automatically if found
-# TODO mobile version / responsive
 # TODO move labels for radio buttons to after radio
 # TODO name the file something different when exporting, delete after download
 # TODO add validation when button is pushed without a selected file
+# TODO add image to pdf download
+# TODO fill in name based on amex number
+# TODO test each dropdown option
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
