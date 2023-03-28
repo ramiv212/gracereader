@@ -159,7 +159,7 @@ def serialize_parsed_text(image_text):
             "ORDERED BY": requested_by,
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list),
-            "Check Box10": is_amex_purchase
+            "Check Box10": is_amex_purchase,
         }
         else:
             return {
@@ -172,7 +172,7 @@ def serialize_parsed_text(image_text):
             "Date1_af_date" : date.today().strftime("%m/%d/%y"),
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list),
-            "Check Box10": is_amex_purchase
+            "Check Box10": is_amex_purchase,
         } 
 
 def parse_image(image_file):
@@ -247,7 +247,7 @@ def parse_pdf(pdf_file):
     return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
-    # fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
+    fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
         serialized_object[field] = immutable_dict[field]
@@ -264,7 +264,10 @@ def serialize_form_object(immutable_dict):
     if immutable_dict['Dropdown3']:
         split_value = immutable_dict['Dropdown3'].split("-")
         serialized_object['Dropdown3'] = " -".join(split_value)
-    
+
+    # set the date by the signature to be today's date
+    serialized_object["Date10_af_date"] = date.today().strftime("%m/%d/%y")
+
     return serialized_object
 
 def get_signature_image():
@@ -281,6 +284,7 @@ def create_pdf_po_document(immutable_dict):
         ordered_by = immutable_dict['ORDERED BY']
 
         add_signature_to_po_pdf(ordered_by,input_pdf_path,signature_pdf_path)
+        print(serialize_form_object(immutable_dict))
         fillpdfs.write_fillable_pdf(signature_pdf_path, output_pdf_path, serialize_form_object(immutable_dict))
 
 
