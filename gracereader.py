@@ -22,6 +22,10 @@ VENDOR_TO_DEPT_DICT = {
 VENDOR_TO_ACCT_DICT = {
 
 }
+    
+PO_NUMBER_BY_PERSON = {
+    'Johny Hernandez' : 0
+}
 
 def file_extension_is_image(filename):
     file_extension = filename.split(".")[1]
@@ -266,12 +270,18 @@ def serialize_form_object(immutable_dict):
 def get_signature_image():
     pass
 
-def add_signature_to_po_pdf(image):
-    fillpdfs.place_image(file_name, x, y, input_pdf_path, output_map_path, page_number, width=10, height=10)
+def add_signature_to_po_pdf(ordered_by,input_pdf_path,output_pdf_path):
+    fillpdfs.place_image(f"static/signatures/{ordered_by}.png", 90, 680, input_pdf_path, output_pdf_path, 1, width=150, height=100)
     
 
 def create_pdf_po_document(immutable_dict):
-        fillpdfs.write_fillable_pdf('static/PO.pdf', 'static/new.pdf', serialize_form_object(immutable_dict))
+        input_pdf_path = 'static/PO.pdf'
+        signature_pdf_path = 'static/PO2.pdf'
+        output_pdf_path = 'static/new.pdf'
+        ordered_by = immutable_dict['ORDERED BY']
+
+        add_signature_to_po_pdf(ordered_by,input_pdf_path,signature_pdf_path)
+        fillpdfs.write_fillable_pdf(signature_pdf_path, output_pdf_path, serialize_form_object(immutable_dict))
 
 
 def process_as_image_or_pdf(file):
