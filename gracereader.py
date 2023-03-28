@@ -7,8 +7,21 @@ import pyap
 from fillpdf import fillpdfs
 import PyPDF2
 from datetime import date
+import re
 
 VENDOR_NAMES = ['amazon','walmart']
+
+CARD_TO_NAME_DICT = {
+    '8240' : 'Johny Hernandez'
+}
+
+VENDOR_TO_DEPT_DICT = {
+
+}
+    
+VENDOR_TO_ACCT_DICT = {
+
+}
 
 def file_extension_is_image(filename):
     file_extension = filename.split(".")[1]
@@ -79,6 +92,18 @@ def find_total(text_line,max_total_list):
             if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
                 max_total_list.append(float(sub_item.strip("$")))
 
+def find_card_digits(text_line):
+    if "****" in text_line or "last digits" in text_line.lower() or "XXXX" in text_line or "debit" in text_line.lower() or "xxx" in text_line:
+        string_without_letter_o = text_line.lower().replace("o","0")
+        matches = re.findall(r"\d{3,4}", string_without_letter_o)
+        print(matches)
+        if matches:
+            return matches
+
+def find_requested_by(card_digits):
+    print(CARD_TO_NAME_DICT)
+    if CARD_TO_NAME_DICT[card_digits]:
+        return CARD_TO_NAME_DICT[card_digits]
 
 def find_amex_purchase(text_line):
     if "amex" in text_line.lower() or "american express" in text_line.lower():
@@ -101,6 +126,7 @@ def serialize_parsed_text(image_text):
     max_total_list = []
     is_amex_purchase = False
     vendor_name = ""
+    requested_by = ""
 
     if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
         for text_line in full_text_array:
@@ -116,11 +142,17 @@ def serialize_parsed_text(image_text):
                 
                 if find_vendors(text_line):
                     vendor_name = find_vendors(text_line)
+
+                card_digits = find_card_digits(text_line)
+                if card_digits and len(card_digits) == 1:
+                    requested_by = find_requested_by(card_digits[0])
+                    
         
 
         if not addresses:
             return {
             "VENDOR NAME": vendor_name,
+            "ORDERED BY": requested_by,
             "Date2_af_date" : receipt_date,
             "Text1" : max(max_total_list),
             "Check Box10": is_amex_purchase
@@ -128,6 +160,7 @@ def serialize_parsed_text(image_text):
         else:
             return {
             "VENDOR NAME": vendor_name,
+            "ORDERED BY": requested_by,
             "ADDRESS": addresses[0].as_dict()['full_street'],
             "CITY": addresses[0].as_dict()['city'],
             "STATE": addresses[0].as_dict()['region1'],
@@ -194,6 +227,8 @@ def parse_image(image_file):
         text = pytesseract.image_to_string(cropped)
 
         text_list = text_list + text
+
+        print(serialize_parsed_text(text_list))
     
     return serialize_parsed_text(text_list)
 
@@ -208,8 +243,7 @@ def parse_pdf(pdf_file):
     return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
-    print(immutable_dict)
-    fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
+    # fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
         serialized_object[field] = immutable_dict[field]
@@ -228,6 +262,12 @@ def serialize_form_object(immutable_dict):
         serialized_object['Dropdown3'] = " -".join(split_value)
     
     return serialized_object
+
+def get_signature_image():
+    pass
+
+def add_signature_to_po_pdf(image):
+    fillpdfs.place_image(file_name, x, y, input_pdf_path, output_map_path, page_number, width=10, height=10)
     
 
 def create_pdf_po_document(immutable_dict):
