@@ -15,6 +15,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO add image to pdf download
 # TODO fill in name based on amex number
 # TODO test each dropdown option
+# TODO add pdf to final pdf insted of image if uploaded image is a pdf
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

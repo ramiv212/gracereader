@@ -12,7 +12,7 @@ import re
 VENDOR_NAMES = ['amazon','walmart']
 
 CARD_TO_NAME_DICT = {
-    '8240' : 'Johny Hernandez'
+    '0041' : 'Johny Hernandez'
 }
 
 VENDOR_TO_DEPT_DICT = {
@@ -27,12 +27,14 @@ PO_NUMBER_BY_PERSON = {
     'Johny Hernandez' : 0
 }
 
+
+
 def file_extension_is_image(filename):
     file_extension = filename.split(".")[1]
-    if file_extension == "png" or file_extension == "jpg" or file_extension == "jpeg" or file_extension == "webp":
-        return True
+    if file_extension == "png" or file_extension == "jpg" or file_extension == "jpeg":
+        return True,file_extension
     elif file_extension == "pdf":
-         return False
+         return False,file_extension
 
 def is_date(string, fuzzy=False):
     """
@@ -98,15 +100,16 @@ def find_total(text_line,max_total_list):
 
 def find_card_digits(text_line):
     if "****" in text_line or "last digits" in text_line.lower() or "XXXX" in text_line or "debit" in text_line.lower() or "xxx" in text_line:
-        string_without_letter_o = text_line.lower().replace("o","0")
-        matches = re.findall(r"\d{3,4}", string_without_letter_o)
-        print(matches)
+
+        string_without_letter_o_or_spaces = text_line.lower().replace("o","0").replace(" ","")
+        print(string_without_letter_o_or_spaces)
+        matches = re.findall(r"\d{3,4}", string_without_letter_o_or_spaces)
         if matches:
+            print(matches)
             return matches
 
 def find_requested_by(card_digits):
-    print(CARD_TO_NAME_DICT)
-    if CARD_TO_NAME_DICT[card_digits]:
+    if card_digits in CARD_TO_NAME_DICT:
         return CARD_TO_NAME_DICT[card_digits]
 
 def find_amex_purchase(text_line):
@@ -123,7 +126,6 @@ def find_vendors(text_line):
                     return vendor.capitalize()
     
 def serialize_parsed_text(image_text):
-    print(image_text)
     full_text_array = image_text.splitlines()
     addresses = find_addresses(full_text_array)
     receipt_date = ""
@@ -232,7 +234,6 @@ def parse_image(image_file):
 
         text_list = text_list + text
 
-        print(serialize_parsed_text(text_list))
     
     return serialize_parsed_text(text_list)
 
@@ -247,21 +248,21 @@ def parse_pdf(pdf_file):
     return serialize_parsed_text(pdf_text)
 
 def serialize_form_object(immutable_dict):
-    fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
+    # fillpdfs.print_form_fields('static/PO2.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
         serialized_object[field] = immutable_dict[field]
 
     # billing method checkbox
-    if immutable_dict['billing-method']:
+    if 'billing-method' in immutable_dict:
         serialized_object[immutable_dict['billing-method']] = "Yes"
 
     # carrier checkbox
-    if immutable_dict['carrier']:
+    if 'carrier' in immutable_dict:
         serialized_object[immutable_dict['carrier']] = "Yes"
 
     # add space to account field
-    if immutable_dict['Dropdown3']:
+    if 'Dropdown3' in immutable_dict:
         split_value = immutable_dict['Dropdown3'].split("-")
         serialized_object['Dropdown3'] = " -".join(split_value)
 
@@ -270,29 +271,48 @@ def serialize_form_object(immutable_dict):
 
     return serialized_object
 
-def get_signature_image():
-    pass
+def add_receipt_to_pdf(receipt_image_or_pdf,input_pdf_path,output_pdf_path):
+            
+        current_pdf = PyPDF2.PdfReader(input_pdf_path)
+        new_pdf = PyPDF2.PdfWriter()
+        new_pdf.add_page(current_pdf.pages[0])
+        new_pdf.add_blank_page()
+        new_pdf.write('static/PO2.pdf')
+
+        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, 'static/PO2.pdf', output_pdf_path, 2, width=500, height=500)
 
 def add_signature_to_po_pdf(ordered_by,input_pdf_path,output_pdf_path):
-    fillpdfs.place_image(f"static/signatures/{ordered_by}.png", 90, 680, input_pdf_path, output_pdf_path, 1, width=150, height=100)
+    print(ordered_by)
+    if (not ordered_by == 'None'):
+        print('ran')
+        fillpdfs.place_image(f"static/signatures/{ordered_by}.png", 90, 680, input_pdf_path, output_pdf_path, 1, width=150, height=100)
     
 
 def create_pdf_po_document(immutable_dict):
         input_pdf_path = 'static/PO.pdf'
-        signature_pdf_path = 'static/PO2.pdf'
-        output_pdf_path = 'static/new.pdf'
+        filled_pdf_path = 'static/PO1.pdf'
+        receipt_pdf_path = 'static/PO3.pdf'
+        signature_pdf_path = 'static/PO4.pdf'
         ordered_by = immutable_dict['ORDERED BY']
 
-        add_signature_to_po_pdf(ordered_by,input_pdf_path,signature_pdf_path)
-        print(serialize_form_object(immutable_dict))
-        fillpdfs.write_fillable_pdf(signature_pdf_path, output_pdf_path, serialize_form_object(immutable_dict))
+
+        # fill in the blank PDF with information from form
+        fillpdfs.write_fillable_pdf(input_pdf_path, filled_pdf_path, serialize_form_object(immutable_dict))
+
+        add_receipt_to_pdf('static/receipt.jpeg',filled_pdf_path,receipt_pdf_path)
+        add_signature_to_po_pdf(ordered_by,receipt_pdf_path,signature_pdf_path)
 
 
 def process_as_image_or_pdf(file):
     filename = file.filename
     read_file = file.read()
-    if file_extension_is_image(filename):
+
+    # if extension is image, create a new image with the name 'receipt' and the same extension
+    if file_extension_is_image(filename)[0]:
+        with open(f"static/receipt.{file_extension_is_image(filename)[1]}", "wb") as binary_file:
+            # Write bytes to file
+            binary_file.write(read_file)
+
         return parse_image(read_file)
     else:
-        print(parse_pdf(read_file))
         return parse_pdf(read_file)
