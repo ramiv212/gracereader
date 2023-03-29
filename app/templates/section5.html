@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row margin20">
+    <div class="col-lg-auto">
+      If this was a meal...
+    </div>
+    <div class="col-lg">
+      <div class="row">
+        <div class="col-lg-4">
+          Who were you with?
+        </div>
+        <div class="col-lg">
+          <input type="text" id="Who were you with" name="Who were you with" style="width: 100%;">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          What was the church purpose?
+        </div>
+        <div class="col-lg">
+          <input type="text" id="What was the church purpose" name="What was the church purpose" style="width: 100%;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg" style="display: flex;align-items:center;justify-content:center; margin-top:50px;margin-bottom:50px;">
+      Total
+    <input
+      type="text"
+      id="Text1"
+      name="Text1"
+      value="{{ response_object['Text1'] }}"
+    />
+    </div>
+    <div class="col-lg" style="display: flex;align-items:center;justify-content:center;margin-top:50px;margin-bottom:50px;">
+      <button type="submit" class="btn btn-success">Render</button>
+
+    </div>
+    
+  </div>
+</div>
