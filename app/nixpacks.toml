@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ['...', 'opencv2']
+nixPkgs = ['...', 'opencv' ,'opencv2', 'python311Packages.opencv4']
