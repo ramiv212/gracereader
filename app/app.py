@@ -48,7 +48,7 @@ def create_app():
 
         new_filename =  create_pdf_po_document(request.form)
 
-        path = f"app/static/final/{new_filename}.pdf"
+        path = f"static/final/{new_filename}.pdf"
 
         cache = send_as_stream_and_delete(path)
 

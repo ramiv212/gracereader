@@ -304,7 +304,7 @@ def parse_pdf(pdf_file):
 
 
 def serialize_form_object(immutable_dict):
-    # fillpdfs.print_form_fields('app/static/PO.pdf', sort=False, page_number=None)
+    # fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
         serialized_object[field] = immutable_dict[field]
@@ -333,7 +333,7 @@ def serialize_form_object(immutable_dict):
 
 def add_receipt_to_pdf(receipt_image_or_pdf, count):
     print(f'ran add receipt count:{count}')
-    current_pdf = PyPDF2.PdfReader(f'app/static/PO{count}.pdf')
+    current_pdf = PyPDF2.PdfReader(f'static/PO{count}.pdf')
     new_pdf = PyPDF2.PdfWriter()
     
     is_image, file_extension = file_extension_is_image(receipt_image_or_pdf)
@@ -350,9 +350,9 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         new_pdf.add_blank_page()
 
         count +=1
-        new_pdf.write(f'app/static/PO{count}.pdf')
-        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, f'app/static/PO{count}.pdf',
-                             f'app/static/PO{count + 1}.pdf', 2, width=500, height=500)
+        new_pdf.write(f'static/PO{count}.pdf')
+        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, f'static/PO{count}.pdf',
+                             f'static/PO{count + 1}.pdf', 2, width=500, height=500)
         
         count += 1
         print(f"image receipt has been added, count is now {count}")
@@ -367,7 +367,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
             new_pdf.add_page(page)
 
         count += 1
-        new_pdf.write(f'app/static/PO{count}.pdf')
+        new_pdf.write(f'static/PO{count}.pdf')
         print(f"pdf receipt has been added, count is now {count}")
         return count
 
@@ -376,7 +376,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
     # so as to not break teh process
     else:
         print(f'ran no file count:{count}')
-        os.rename(f'app/static/PO{count}.pdf',f'app/static/PO{count + 1}.pdf')
+        os.rename(f'static/PO{count}.pdf',f'static/PO{count + 1}.pdf')
         count += 1
         print(f"no receipt has been added, count is now {count}")
         return count
@@ -387,10 +387,10 @@ def add_signature_to_po_pdf(ordered_by, count):
     print(f'ran add signature count:{count}')
     if len(ordered_by) > 0 and ordered_by in PO_NUMBER_BY_PERSON:
 
-        fillpdfs.place_image(f"app/static/signatures/{ordered_by}.png",
+        fillpdfs.place_image(f"static/signatures/{ordered_by}.png",
             90,
             680, 
-            f'app/static/PO{count}.pdf', f'app/static/PO{count + 1}.pdf', 1, width=150, height=100)
+            f'static/PO{count}.pdf', f'static/PO{count + 1}.pdf', 1, width=150, height=100)
         count += 1
 
         return count
@@ -398,12 +398,12 @@ def add_signature_to_po_pdf(ordered_by, count):
     # if there is no ordered_by, rename the previous pdf in the pipeline to the next
     # as if the step had completed so that the process does not break
     else:
-        os.rename(f'app/static/PO{count}.pdf',f'app/static/PO{count + 1}.pdf')
+        os.rename(f'static/PO{count}.pdf',f'static/PO{count + 1}.pdf')
         count += 1
         return count
 
 def delete_generated_receipt_files():
-    list_of_files_in_static = os.listdir('app/static')
+    list_of_files_in_static = os.listdir('static')
 
     regex_str = f"(PO[0-9]|receipt)"
 
@@ -415,12 +415,12 @@ def delete_generated_receipt_files():
 
     # Delete the receipt files that match the regex ("PO" followed by a single digit, OR a string of "receipt")
     for file in matches:
-        os.remove(f"app/static/{file}")
+        os.remove(f"static/{file}")
 
 
 # will look through the "static" folder for the "receipt" file an return it's extension
 def get_receipt_file_extension():
-    list_of_files_in_static = os.listdir('app/static')
+    list_of_files_in_static = os.listdir('static')
     for file in list_of_files_in_static:
         if "receipt" in file:
             return file.split(".")[1]
@@ -429,7 +429,7 @@ def get_receipt_file_extension():
 def create_pdf_po_document(immutable_dict):
     # create an incrementing count for PO export
     count = 1
-    input_pdf_path = "app/static/PO.pdf"
+    input_pdf_path = "static/PO.pdf"
 
     ordered_by = immutable_dict['ORDERED BY']
 
@@ -446,14 +446,14 @@ def create_pdf_po_document(immutable_dict):
 
     # fill in the blank PDF with information from form
     fillpdfs.write_fillable_pdf(
-        input_pdf_path, f"app/static/PO{count}.pdf", serialize_form_object(immutable_dict))
+        input_pdf_path, f"static/PO{count}.pdf", serialize_form_object(immutable_dict))
         
-    count = add_receipt_to_pdf(f'app/static/receipt.{receipt_file_extension}',count)
+    count = add_receipt_to_pdf(f'static/receipt.{receipt_file_extension}',count)
     
     count = add_signature_to_po_pdf(ordered_by,count)
 
     # rename the final pdf of the pipeline to the generated PO number
-    os.rename(f'app/static/PO{count}.pdf',f"app/static/final/{finalized_po_filename}.pdf")
+    os.rename(f'static/PO{count}.pdf',f"static/final/{finalized_po_filename}.pdf")
 
     delete_generated_receipt_files()
 
@@ -467,7 +467,7 @@ def create_pdf_po_document(immutable_dict):
 
 
 def export_to_file_named_receipt(read_file, extension):
-    path = os.path.join(os.getcwd(),f"app/static/receipt.{extension}")
+    path = os.path.join(os.getcwd(),f"static/receipt.{extension}")
 
     with open(path, "wb") as binary_file:
         # Write bytes to file
