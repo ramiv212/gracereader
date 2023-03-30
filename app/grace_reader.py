@@ -468,6 +468,8 @@ def create_pdf_po_document(immutable_dict):
 
     # rename the final pdf of the pipeline to the generated PO number
     path3 = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+    os.listdir("static")
+    
     renamed_path = os.path.join(os.getcwd(),f"static/final/{finalized_po_filename}.pdf")
 
     os.rename(path3,renamed_path)
