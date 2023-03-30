@@ -6,15 +6,10 @@ UPLOAD_FOLDER = '/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 
 # TODO refactor the date finding logic
-# TODO make sure all HTML field names match PDF field names
-# TODO fix all frontend and backend validation
-# TODO name the file something different when exporting, delete after download
-# TODO add validation when button is pushed without a selected file
-# TODO test each dropdown option
 # TODO test a pdf receipt with many pages
-# TODO overwrite auto generated PO number,date,requested by if there is one in the 'NUMBER' field
 # TODO add valiation for adding a signature when someone writes in a name that does not exist
-# TODO make ordered by a dropdown??
+# TODO make ordered_by be a dropdown??
+# TODO fixed dropdowns dont render the first time render button is pushed
 
 
 def create_app():
