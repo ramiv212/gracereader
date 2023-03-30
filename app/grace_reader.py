@@ -453,7 +453,10 @@ def create_pdf_po_document(immutable_dict):
     count = add_signature_to_po_pdf(ordered_by,count)
 
     # rename the final pdf of the pipeline to the generated PO number
-    os.rename(f'static/PO{count}.pdf',f"static/final/{finalized_po_filename}.pdf")
+    path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+    renamed_path = os.path.join(os.getcwd(),f"static/final/{finalized_po_filename}.pdf")
+
+    os.rename(path,renamed_path)
 
     delete_generated_receipt_files()
 
