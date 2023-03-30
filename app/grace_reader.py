@@ -333,7 +333,8 @@ def serialize_form_object(immutable_dict):
 
 def add_receipt_to_pdf(receipt_image_or_pdf, count):
     print(f'ran add receipt count:{count}')
-    current_pdf = PyPDF2.PdfReader(f'static/PO{count}.pdf')
+    path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+    current_pdf = PyPDF2.PdfReader(path)
     new_pdf = PyPDF2.PdfWriter()
     
     is_image, file_extension = file_extension_is_image(receipt_image_or_pdf)
@@ -350,9 +351,12 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         new_pdf.add_blank_page()
 
         count +=1
-        new_pdf.write(f'static/PO{count}.pdf')
-        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, f'static/PO{count}.pdf',
-                             f'static/PO{count + 1}.pdf', 2, width=500, height=500)
+        path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+        path2 = os.path.join(os.getcwd(),f'static/PO{count + 1}.pdf')
+        
+        new_pdf.write(path)
+        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, path,
+                             path2, 2, width=500, height=500)
         
         count += 1
         print(f"image receipt has been added, count is now {count}")
@@ -367,7 +371,8 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
             new_pdf.add_page(page)
 
         count += 1
-        new_pdf.write(f'static/PO{count}.pdf')
+        path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+        new_pdf.write(path)
         print(f"pdf receipt has been added, count is now {count}")
         return count
 
@@ -376,7 +381,11 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
     # so as to not break teh process
     else:
         print(f'ran no file count:{count}')
-        os.rename(f'static/PO{count}.pdf',f'static/PO{count + 1}.pdf')
+        
+        path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+        path2 = os.path.join(os.getcwd(),f'static/PO{count + 1}.pdf')
+
+        os.rename(path,path2)
         count += 1
         print(f"no receipt has been added, count is now {count}")
         return count
@@ -386,8 +395,9 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
 def add_signature_to_po_pdf(ordered_by, count):
     print(f'ran add signature count:{count}')
     if len(ordered_by) > 0 and ordered_by in PO_NUMBER_BY_PERSON:
+        path = os.path.join(os.getcwd(),f"static/signatures/{ordered_by}.png")
 
-        fillpdfs.place_image(f"static/signatures/{ordered_by}.png",
+        fillpdfs.place_image(path,
             90,
             680, 
             f'static/PO{count}.pdf', f'static/PO{count + 1}.pdf', 1, width=150, height=100)
@@ -398,7 +408,9 @@ def add_signature_to_po_pdf(ordered_by, count):
     # if there is no ordered_by, rename the previous pdf in the pipeline to the next
     # as if the step had completed so that the process does not break
     else:
-        os.rename(f'static/PO{count}.pdf',f'static/PO{count + 1}.pdf')
+        path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+        path2 = os.path.join(os.getcwd(),f'static/PO{count + 1}.pdf')
+        os.rename(path,path2)
         count += 1
         return count
 
@@ -429,7 +441,7 @@ def get_receipt_file_extension():
 def create_pdf_po_document(immutable_dict):
     # create an incrementing count for PO export
     count = 1
-    input_pdf_path = "static/PO.pdf"
+    input_pdf_path = os.path.join(os.getcwd(),"static/PO.pdf")
 
     ordered_by = immutable_dict['ORDERED BY']
 
@@ -445,18 +457,20 @@ def create_pdf_po_document(immutable_dict):
     receipt_file_extension = get_receipt_file_extension()
 
     # fill in the blank PDF with information from form
+    path = os.path.join(os.getcwd(),f"static/PO{count}.pdf")
     fillpdfs.write_fillable_pdf(
-        input_pdf_path, f"static/PO{count}.pdf", serialize_form_object(immutable_dict))
-        
-    count = add_receipt_to_pdf(f'static/receipt.{receipt_file_extension}',count)
+        input_pdf_path, path, serialize_form_object(immutable_dict))
+    
+    path2 = os.path.join(os.getcwd(),f'static/receipt.{receipt_file_extension}')
+    count = add_receipt_to_pdf(path2,count)
     
     count = add_signature_to_po_pdf(ordered_by,count)
 
     # rename the final pdf of the pipeline to the generated PO number
-    path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
+    path3 = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
     renamed_path = os.path.join(os.getcwd(),f"static/final/{finalized_po_filename}.pdf")
 
-    os.rename(path,renamed_path)
+    os.rename(path3,renamed_path)
 
     delete_generated_receipt_files()
 
