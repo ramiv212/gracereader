@@ -8,6 +8,7 @@ itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.2
 numpy==1.24.2
+opencv-python-headless==4.7.0.72
 packaging==23.0
 pdf2image==1.16.3
 pdfrw2==0.5.0
