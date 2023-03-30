@@ -1,8 +1,5 @@
-import os
-from flask import Flask, flash, request, redirect, url_for,render_template,send_file
-from werkzeug.utils import secure_filename
+from flask import Flask, request,render_template,send_file
 from grace_reader import process_as_image_or_pdf,create_pdf_po_document,send_as_stream_and_delete
-import json
 
 
 UPLOAD_FOLDER = '/uploads'
