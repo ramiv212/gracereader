@@ -239,6 +239,7 @@ def parse_image(image_file):
 
     # Read image from which text needs to be extracted
     bytes_as_np_array = np.frombuffer(image_file, dtype=np.uint8)
+    print(bytes_as_np_array)
     img = cv2.imdecode(bytes_as_np_array, cv2.IMREAD_UNCHANGED)
 
     # Convert the image to gray scale
@@ -309,7 +310,6 @@ def serialize_form_object(immutable_dict):
     # fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
-        print(immutable_dict[field])
         serialized_object[field] = immutable_dict[field]
 
     # billing method checkbox
@@ -335,7 +335,7 @@ def serialize_form_object(immutable_dict):
 
 
 def add_receipt_to_pdf(receipt_image_or_pdf, count):
-    print(f'ran add receipt count:{count}')
+    # print(f'ran add receipt count:{count}')
     path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
     current_pdf = PyPDF2.PdfReader(path)
     new_pdf = PyPDF2.PdfWriter()
@@ -352,7 +352,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         converted_jpeg_path = os.path.join(os.getcwd(),f'static/receipt.jpg')
         convert_to_jpeg.save(converted_jpeg_path)
 
-        print(f'ran image count:{count}')
+        # print(f'ran image count:{count}')
         # create a blank page on the pdf and append the image to it, then export a new pdf
         new_pdf.add_page(current_pdf.pages[0])
         new_pdf.add_blank_page()
@@ -366,11 +366,11 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
                              path2, 2, width=500, height=500)
         
         count += 1
-        print(f"image receipt has been added, count is now {count}")
+        # print(f"image receipt has been added, count is now {count}")
         return count
 
     elif not is_image and file_extension:
-        print(f'ran is pdf count:{count}')
+        # print(f'ran is pdf count:{count}')
         # create a new pdf, append the po pdf page, then append the receipt pdf pages
         receipt_pdf = PyPDF2.PdfReader(receipt_image_or_pdf)
         new_pdf.add_page(current_pdf.pages[0])
@@ -380,27 +380,27 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         count += 1
         path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
         new_pdf.write(path)
-        print(f"pdf receipt has been added, count is now {count}")
+        # print(f"pdf receipt has been added, count is now {count}")
         return count
 
 
     # if no receipt image can be found, skip this step and rename the previous pdf in the pipeline
     # so as to not break teh process
     else:
-        print(f'ran no file count:{count}')
+        # print(f'ran no file count:{count}')
         
         path = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
         path2 = os.path.join(os.getcwd(),f'static/PO{count + 1}.pdf')
 
         os.rename(path,path2)
         count += 1
-        print(f"no receipt has been added, count is now {count}")
+        # print(f"no receipt has been added, count is now {count}")
         return count
 
 
 
 def add_signature_to_po_pdf(ordered_by, count):
-    print(f'ran add signature count:{count}')
+    # print(f'ran add signature count:{count}')
     if len(ordered_by) > 0 and ordered_by in PO_NUMBER_BY_PERSON:
         path = os.path.join(os.getcwd(),f"static/signatures/{ordered_by}.png")
 
@@ -463,7 +463,7 @@ def create_pdf_po_document(immutable_dict):
 
     receipt_file_extension = get_receipt_file_extension()
 
-    print(serialize_form_object(immutable_dict))
+    # print(serialize_form_object(immutable_dict))
 
     # fill in the blank PDF with information from form
     path = os.path.join(os.getcwd(),f"static/PO{count}.pdf")
@@ -477,7 +477,6 @@ def create_pdf_po_document(immutable_dict):
 
     # rename the final pdf of the pipeline to the generated PO number
     path3 = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
-    print(os.listdir("static"))
 
     renamed_path = os.path.join(os.getcwd(),f"static/final/{finalized_po_filename}.pdf")
 
