@@ -20,6 +20,7 @@ def create_app():
     def hello_world():
         
         def file_was_uploaded(f):
+            print(f)
             if f:
                 response_object = process_as_image_or_pdf(f)
                 return render_template('index.html', response_object = response_object)

@@ -8,6 +8,7 @@ from fillpdf import fillpdfs
 import PyPDF2
 from datetime import date
 import re
+from PIL import Image
 
 VENDOR_NAMES = ['amazon', 'walmart']
 
@@ -42,7 +43,8 @@ def send_as_stream_and_delete(path):
 def file_extension_is_image(filename):
     file_extension = filename.split(".")[1]
 
-    if file_extension == "png" or file_extension == "jpg" or file_extension == "jpeg":
+    if file_extension == "png" or file_extension == "jpg" or file_extension == "jpeg" or file_extension == "webp":
+        print(file_extension)
         return True, file_extension
     elif file_extension == "pdf":
         return False, file_extension
@@ -307,6 +309,7 @@ def serialize_form_object(immutable_dict):
     # fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
     serialized_object = {}
     for field in immutable_dict:
+        print(immutable_dict[field])
         serialized_object[field] = immutable_dict[field]
 
     # billing method checkbox
@@ -345,6 +348,10 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
     )
 
     if is_image:
+        convert_to_jpeg = Image.open(receipt_image_or_pdf).convert("RGB")
+        converted_jpeg_path = os.path.join(os.getcwd(),f'static/receipt.jpg')
+        convert_to_jpeg.save(converted_jpeg_path)
+
         print(f'ran image count:{count}')
         # create a blank page on the pdf and append the image to it, then export a new pdf
         new_pdf.add_page(current_pdf.pages[0])
@@ -355,7 +362,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         path2 = os.path.join(os.getcwd(),f'static/PO{count + 1}.pdf')
         
         new_pdf.write(path)
-        fillpdfs.place_image(receipt_image_or_pdf, 0, 0, path,
+        fillpdfs.place_image(converted_jpeg_path, 0, 0, path,
                              path2, 2, width=500, height=500)
         
         count += 1
@@ -455,6 +462,8 @@ def create_pdf_po_document(immutable_dict):
         finalized_po_filename = f"PO{todays_date}01"
 
     receipt_file_extension = get_receipt_file_extension()
+
+    print(serialize_form_object(immutable_dict))
 
     # fill in the blank PDF with information from form
     path = os.path.join(os.getcwd(),f"static/PO{count}.pdf")

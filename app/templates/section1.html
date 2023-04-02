@@ -36,7 +36,7 @@
       <label for="Dropdown2">Dept Name</label>
     </div>
     <div class="col-lg-8">
-      <select id="Dropdown2" name="Dropdown2" style="width: 100%;">
+      <select id="Dropdown2" name="Dropdown2" value="{{ response_object['Dropdown2'] }}" style="width: 100%;">
         <option disabled selected>Choose One</option>
         <option>Cafe</option>
         <option>Car Shows</option>
@@ -72,7 +72,7 @@
       <label for="Dropdown3">Account</label>
     </div>
     <div class="col-lg-8">
-      <select id="Dropdown3" name="Dropdown3" style="width: 100%;">
+      <select id="Dropdown3" name="Dropdown3" value="{{ response_object['Dropdown3'] }}" style="width: 100%;">
         <option disabled selected>Choose One</option>
         <option>Dept Budgets - Computer Oper</option>
         <option>Dept Budgets - Dues & Subscriptions</option>
@@ -242,3 +242,18 @@
     </div>
   </div>
 </div>
+
+
+<script>
+
+  const dropdown2 = document.getElementById('Dropdown2');
+  const dropdown3 = document.getElementById('Dropdown3');
+
+  console.log(dropdown2)
+
+  dropdown2.onchange = (e) => {
+    dropdown2.value = e.target.value; 
+    console.log(dropdown2.value)
+  }
+
+</script>

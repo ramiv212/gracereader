@@ -139,7 +139,7 @@
         </form>
       </div>
     </div>
-    <!-- <span>{{ response_object }} Test</span> -->
+    <span>{{ response_object }} Test</span>
 
     <!-- bootstrap -->
     <script
@@ -164,12 +164,24 @@
       const uploadedFilename = document.getElementById("uploaded-filename");
       
 
-      fileInputField.onchange = () => {
+      fileInputField.onchange = async () => {
         if (fileInputField.files.length > 0) {
-          console.log(fileInputField.files[0].name);
+
+          const newWebPFileBlob = await createResizedImage(fileInputField.files[0]);
+          const uploadFile = new File([newWebPFileBlob],"upload.webp");
+          fileInputField.files[0] = uploadFile;
           fileInputLabel.innerText = fileInputField.files[0].name;
+
+          const newFileList = new DataTransfer();
+          newFileList.items.add(uploadFile);
+
+          fileInputField.files = newFileList.files
+
+          console.log(fileInputField.files)
+          console.log(uploadFile)
         };
       };
     </script>
+    <script src="../static/scripts.js"></script>
   </body>
 </html>
