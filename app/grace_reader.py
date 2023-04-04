@@ -8,7 +8,7 @@ from fillpdf import fillpdfs
 import PyPDF2
 from datetime import date
 import re
-from PIL import Image
+from PIL import Image,ImageOps
 
 VENDOR_NAMES = ['amazon', 'walmart']
 
@@ -238,16 +238,15 @@ def parse_image(image_file):
     text_list = ""
 
     # Read image from which text needs to be extracted
-    bytes_as_np_array = np.frombuffer(image_file, dtype=np.uint8)
-    print(bytes_as_np_array)
-    img = cv2.imdecode(bytes_as_np_array, cv2.IMREAD_UNCHANGED)
+    img = cv2.cvtColor(np.array(image_file), cv2.COLOR_BGR2GRAY)
 
     # Convert the image to gray scale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Performing OTSU threshold
+    # pipe is a bitwise OR
     ret, thresh1 = cv2.threshold(
-        gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+        img, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
 
     # Specify structure shape and kernel size.
     # Kernel size increases or decreases the area
@@ -482,7 +481,7 @@ def create_pdf_po_document(immutable_dict):
 
     os.rename(path3,renamed_path)
 
-    delete_generated_receipt_files()
+    # delete_generated_receipt_files()
 
     check_if_new_day(date.today(),DATE_OF_LAST_PO_GENERATION)
 
@@ -502,7 +501,13 @@ def export_to_file_named_receipt(read_file, extension):
 
 
 def process_as_image_or_pdf(file):
+
+    convert_to_pil = Image.open(file).convert("RGB")
+    print(ImageOps.exif_transpose(convert_to_pil))
+    print('ran')
+
     filename = file.filename
+    file.seek(0)
     read_file = file.read()
 
     is_image, extension = file_extension_is_image(filename)
@@ -512,7 +517,7 @@ def process_as_image_or_pdf(file):
 
     # if extension is image, create a new image with the name 'receipt' and the same extension
     if is_image:
-        return parse_image(read_file)
+        return parse_image(convert_to_pil)
 
     else:
         return parse_pdf(read_file)

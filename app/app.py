@@ -10,6 +10,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO add valiation for adding a signature when someone writes in a name that does not exist
 # TODO make ordered_by be a dropdown??
 # TODO fixed dropdowns dont render the first time render button is pushed
+# TODO image taken straight from phone is being cropped and rotated
 
 
 def create_app():
