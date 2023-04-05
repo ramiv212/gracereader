@@ -40,16 +40,17 @@ def create_app():
                 
             
 
-    @app.route("/renderform", methods=['POST'])
+    @app.route("/renderform", methods=['GET', 'POST'])
     def render_form():
 
-        new_filename =  create_pdf_po_document(request.form)
-
-        path = f"static/final/{new_filename}.pdf"
-
-        cache = send_as_stream_and_delete(path)
-
-        return send_file(cache, as_attachment=True, download_name=f"{new_filename}.pdf")
+        if request.method == 'POST':
+            new_filename =  create_pdf_po_document(request.form)
+            path = f"static/final/{new_filename}.pdf"
+            cache = send_as_stream_and_delete(path)
+            return send_file(cache, as_attachment=True, download_name=f"{new_filename}.pdf")
+        
+        elif request.method == 'GET':
+            return render_template('index.html', response_object = {}, title="TITLE")
     
     return app
 

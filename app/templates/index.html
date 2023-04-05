@@ -193,8 +193,6 @@
         loadImage(
           fileInputField.files[0],
           async (image, data) => {
-            let finalImage = null;
-
             if (data.imageHead && data.exif && isIOS) {
               // Reset Exif Orientation data:
               loadImage.writeExifData(data.imageHead, data, "Orientation", 6);
