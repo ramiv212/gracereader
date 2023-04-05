@@ -133,7 +133,7 @@
             </div>
           </div>
           {% include 'section5.html' %}
-          
+
           <!-- this is to tell the "create_pdf_po_document" function what extension to look for -->
           <!-- in the newly generated "receipt" file -->
         </form>
@@ -163,45 +163,57 @@
       const fileInputLabel = document.getElementById("custom-file-upload");
       const uploadedFilename = document.getElementById("uploaded-filename");
 
-      let isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-      !window.MSStream
+      let isIOS =
+        (/iPad|iPhone|iPod/.test(navigator.platform) ||
+          (navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1)) &&
+        !window.MSStream;
 
-      document.body.append(`${isIOS}`)
-    
+      document.body.append(`${isIOS}`);
+
+      function uploadImage(newImageBlob) {
+        // name the label to the name of the uploaded image file
+        fileInputLabel.innerText = fileInputField.files[0].name;
+
+        // create a new blob from the rotated image and then create a new file from it
+        const uploadFile = new File([newImageBlob], "upload.webp");
+
+        // create a new filelist, and add the new created file blob to it
+        const newFileList = new DataTransfer();
+        newFileList.items.add(uploadFile);
+
+        // add new file list to the file upload field
+        fileInputField.files = newFileList.files;
+      }
 
       // when adding a file to the input field, load the image and:
       // if it is an IOS device, rotate it to orientation 5
       // if not, do not rotate it
       fileInputField.onchange = async () => {
-          loadImage(
-            fileInputField.files[0],
-            isIOS ?
-          { maxWidth: 600,
-            orientation: 6 } : {
-              maxWidth: 600
-            } // Options
-        ).then(async (data) => {
+        loadImage(
+          fileInputField.files[0],
+          async (image, data) => {
+            let finalImage = null;
 
-          // name the label to the name of the uploaded image file
-          fileInputLabel.innerText = fileInputField.files[0].name;
-          
-          // create a new blob from the rotated image and then create a new file from it
-          const newWebPFileBlob = await createResizedImage(data.image);
-          const uploadFile = new File([newWebPFileBlob],"upload.webp");
-
-          // create a new filelist, and add the new created file blob to it
-          const newFileList = new DataTransfer();
-          newFileList.items.add(uploadFile);
-
-          // add new file list to the file upload field
-          fileInputField.files = newFileList.files
-
-
-          <!-- document.body.append(data.image) -->
-        } );
+            if (data.imageHead && data.exif && isIOS) {
+              // Reset Exif Orientation data:
+              loadImage.writeExifData(data.imageHead, data, "Orientation", 6);
+              image.toBlob(function (blob) {
+                loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
+                  uploadImage(newBlob)
+                });
+              }, "image/jpeg");
+            } else {
+              const newImageBlob = await createResizedImage(image);
+              uploadImage(newImageBlob)
+            }
+          },
+          {
+            maxWidth: 600,
+          }
+          // Options);
+        );
       };
-
     </script>
     <script src="../static/scripts.js"></script>
     <script src="../static/node/node_modules/blueimp-load-image/js/load-image.all.min.js"></script>
