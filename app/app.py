@@ -10,7 +10,6 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO add valiation for adding a signature when someone writes in a name that does not exist
 # TODO make ordered_by be a dropdown??
 # TODO fixed dropdowns dont render the first time render button is pushed
-# TODO BAD REQUEST after doing more than one scan
 
 def create_app():
     app = Flask(__name__)
