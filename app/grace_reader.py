@@ -8,7 +8,9 @@ from fillpdf import fillpdfs
 import PyPDF2
 from datetime import date
 import re
-from PIL import Image,ImageOps
+from PIL import Image
+from pdf2image import convert_from_bytes
+
 
 VENDOR_NAMES = ['amazon', 'walmart']
 
@@ -70,7 +72,10 @@ def is_date(string, fuzzy=False):
 def find_addresses(full_text_array):
     # parse the image text as one big blob and
     fulltext = " ".join(full_text_array)
-    return pyap.parse(fulltext, country='US')
+    for address in pyap.parse(fulltext, country='US'):
+        grace_addr = address.as_dict()['full_street']
+        if "24400" not in grace_addr and not "North" in grace_addr:
+            return address
 
 
 def string_includes_month(string):
@@ -112,9 +117,14 @@ def find_date(text_line):
 # not very sophisticated right now
 def find_total(text_line, max_total_list):
     split_sub_item = text_line.split()
-    for sub_item in split_sub_item:
+    for sub_item in split_sub_item:  
         if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
-            max_total_list.append(float(sub_item.strip("$").replace(",","")))
+            print(sub_item)
+            pattern = r"\$[\d,]+(?:\.\d{2})?"
+            regex = re.compile(pattern)
+            matches = regex.findall(sub_item)
+            for match in matches:
+                max_total_list.append(float(match.strip("$").replace(",","")))
 
 
 def find_card_digits(text_line):
@@ -135,7 +145,7 @@ def find_requested_by(card_digits):
 
 
 def find_amex_purchase(text_line):
-    if "amex" in text_line.lower() or "american express" in text_line.lower():
+    if "amex" in text_line.lower() or "american express" in text_line.lower() or "credit" in text_line.lower() or "card" in text_line.lower():
         return True
 
 
@@ -185,6 +195,9 @@ def serialize_parsed_text(image_text):
     vendor_name = ""
     requested_by = ""
     number = ""
+    receipt_total = ""
+
+    print(addresses)
 
     if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
         for text_line in full_text_array:
@@ -207,6 +220,9 @@ def serialize_parsed_text(image_text):
 
                 if not (requested_by == ""):
                     number = generate_po_number(requested_by)
+            
+            if max_total_list:
+                receipt_total = max(max_total_list)
                 
 
         if not addresses:
@@ -215,20 +231,20 @@ def serialize_parsed_text(image_text):
                 "VENDOR NAME": vendor_name,
                 "ORDERED BY": requested_by,
                 "Date2_af_date": receipt_date,
-                "Text1": max(max_total_list),
+                "Text1": receipt_total,
                 "Check Box10": is_amex_purchase,
             }
         else:
             return {
                 "VENDOR NAME": vendor_name,
                 "ORDERED BY": requested_by,
-                "ADDRESS": addresses[0].as_dict()['full_street'],
-                "CITY": addresses[0].as_dict()['city'],
-                "STATE": addresses[0].as_dict()['region1'],
-                "ZIP": addresses[0].as_dict()['postal_code'],
+                "ADDRESS": addresses.as_dict()['full_street'],
+                "CITY": addresses.as_dict()['city'],
+                "STATE": addresses.as_dict()['region1'],
+                "ZIP": addresses.as_dict()['postal_code'],
                 "Date1_af_date": date.today().strftime("%m/%d/%y"),
                 "Date2_af_date": receipt_date,
-                "Text1": max(max_total_list),
+                "Text1": receipt_total,
                 "Check Box10": is_amex_purchase,
             }
 
@@ -519,4 +535,12 @@ def process_as_image_or_pdf(file):
         return parse_image(read_file)
 
     else:
-        return parse_pdf(read_file)
+        pdf_to_image = convert_from_bytes(read_file)[0]
+
+        # img = Image.open(pdf_to_image, mode='r')
+
+        img_byte_arr = io.BytesIO()
+        pdf_to_image.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+
+        return parse_image(img_byte_arr)
