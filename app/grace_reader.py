@@ -484,7 +484,7 @@ def create_pdf_po_document(immutable_dict):
 
     os.rename(path3,renamed_path)
 
-    # delete_generated_receipt_files()
+    delete_generated_receipt_files()
 
     check_if_new_day(date.today(),DATE_OF_LAST_PO_GENERATION)
 
