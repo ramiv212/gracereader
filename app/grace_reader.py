@@ -114,7 +114,7 @@ def find_total(text_line, max_total_list):
     split_sub_item = text_line.split()
     for sub_item in split_sub_item:
         if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
-            max_total_list.append(float(sub_item.strip("$")))
+            max_total_list.append(float(sub_item.strip("$").replace(",","")))
 
 
 def find_card_digits(text_line):

@@ -172,8 +172,6 @@
       document.body.append(`${isIOS}`);
 
       function uploadImage(newImageBlob) {
-        // name the label to the name of the uploaded image file
-        fileInputLabel.innerText = fileInputField.files[0].name;
 
         // create a new blob from the rotated image and then create a new file from it
         const uploadFile = new File([newImageBlob], "upload.webp");
@@ -190,27 +188,33 @@
       // if it is an IOS device, rotate it to orientation 5
       // if not, do not rotate it
       fileInputField.onchange = async () => {
-        loadImage(
-          fileInputField.files[0],
-          async (image, data) => {
-            if (data.imageHead && data.exif && isIOS) {
-              // Reset Exif Orientation data:
-              loadImage.writeExifData(data.imageHead, data, "Orientation", 6);
-              image.toBlob(function (blob) {
-                loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
-                  uploadImage(newBlob)
-                });
-              }, "image/jpeg");
-            } else {
-              const newImageBlob = await createResizedImage(image);
-              uploadImage(newImageBlob)
+        
+        // name the label to the name of the uploaded image file
+        fileInputLabel.innerText = fileInputField.files[0].name;
+
+        if (fileInputField.files[0].name.split(".")[1] !== "pdf"){
+          loadImage(
+            fileInputField.files[0],
+            async (image, data) => {
+              if (data.imageHead && data.exif && isIOS) {
+                // Reset Exif Orientation data:
+                loadImage.writeExifData(data.imageHead, data, "Orientation", 6);
+                image.toBlob(function (blob) {
+                  loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
+                    uploadImage(newBlob)
+                  });
+                }, "image/jpeg");
+              } else {
+                const newImageBlob = await createResizedImage(image);
+                uploadImage(newImageBlob)
+              }
+            },
+            {
+              maxWidth: 600,
             }
-          },
-          {
-            maxWidth: 600,
-          }
-          // Options);
-        );
+            // Options);
+          );
+        };
       };
     </script>
     <script src="../static/scripts.js"></script>
