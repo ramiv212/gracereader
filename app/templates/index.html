@@ -107,7 +107,7 @@
               accept="image/png, image/jpeg, .pdf"
               style="width: 50%"
             />
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Scan Image</button>
           </form>
         </div>
       </div>
@@ -162,26 +162,48 @@
       const fileInputField = document.getElementById("file-upload");
       const fileInputLabel = document.getElementById("custom-file-upload");
       const uploadedFilename = document.getElementById("uploaded-filename");
-      
 
+      let isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+      !window.MSStream
+
+      document.body.append(`${isIOS}`)
+    
+
+      // when adding a file to the input field, load the image and:
+      // if it is an IOS device, rotate it to orientation 5
+      // if not, do not rotate it
       fileInputField.onchange = async () => {
-        if (fileInputField.files.length > 0) {
+          loadImage(
+            fileInputField.files[0],
+            isIOS ?
+          { maxWidth: 600,
+            orientation: 6 } : {
+              maxWidth: 600
+            } // Options
+        ).then(async (data) => {
 
-          const newWebPFileBlob = await createResizedImage(fileInputField.files[0]);
-          const uploadFile = new File([newWebPFileBlob],"upload.webp");
-          fileInputField.files[0] = uploadFile;
+          // name the label to the name of the uploaded image file
           fileInputLabel.innerText = fileInputField.files[0].name;
+          
+          // create a new blob from the rotated image and then create a new file from it
+          const newWebPFileBlob = await createResizedImage(data.image);
+          const uploadFile = new File([newWebPFileBlob],"upload.webp");
 
+          // create a new filelist, and add the new created file blob to it
           const newFileList = new DataTransfer();
           newFileList.items.add(uploadFile);
 
+          // add new file list to the file upload field
           fileInputField.files = newFileList.files
 
-          console.log(fileInputField.files)
-          console.log(uploadFile)
-        };
+
+          <!-- document.body.append(data.image) -->
+        } );
       };
+
     </script>
     <script src="../static/scripts.js"></script>
+    <script src="../static/node/node_modules/blueimp-load-image/js/load-image.all.min.js"></script>
   </body>
 </html>

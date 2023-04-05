@@ -242,12 +242,12 @@ def parse_image(image_file):
     img = cv2.imdecode(bytes_as_np_array, cv2.IMREAD_UNCHANGED)
 
     # Convert the image to gray scale
-    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Performing OTSU threshold
     # pipe is a bitwise OR
     ret, thresh1 = cv2.threshold(
-        img, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
+        gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
 
     # Specify structure shape and kernel size.
     # Kernel size increases or decreases the area
@@ -505,12 +505,8 @@ def export_to_file_named_receipt(read_file, extension):
 
 def process_as_image_or_pdf(file):
 
-    convert_to_pil = Image.open(file).convert("RGB")
-    print(ImageOps.exif_transpose(convert_to_pil))
-    print('ran')
 
     filename = file.filename
-    file.seek(0)
     read_file = file.read()
 
     is_image, extension = file_extension_is_image(filename)
@@ -520,7 +516,7 @@ def process_as_image_or_pdf(file):
 
     # if extension is image, create a new image with the name 'receipt' and the same extension
     if is_image:
-        return parse_image(convert_to_pil)
+        return parse_image(read_file)
 
     else:
         return parse_pdf(read_file)
