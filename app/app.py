@@ -1,4 +1,4 @@
-from flask import Flask, request,render_template,send_file
+from flask import Flask, request,render_template,send_file,redirect
 from grace_reader import process_as_image_or_pdf,create_pdf_po_document,send_as_stream_and_delete
 
 
@@ -10,7 +10,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO add valiation for adding a signature when someone writes in a name that does not exist
 # TODO make ordered_by be a dropdown??
 # TODO fixed dropdowns dont render the first time render button is pushed
-# TODO PDF render to PO is now broken
+# TODO BAD REQUEST after doing more than one scan
 
 def create_app():
     app = Flask(__name__)
@@ -49,10 +49,10 @@ def create_app():
             return send_file(cache, as_attachment=True, download_name=f"{new_filename}.pdf")
         
         elif request.method == 'GET':
-            return render_template('index.html', response_object = {}, title="TITLE")
+            return redirect('/')
     
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8000)

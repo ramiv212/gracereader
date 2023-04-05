@@ -1,5 +1,5 @@
 async function createResizedImage (file, size) {
-    size ??= 1028
+    size ??= 900
   
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -15,7 +15,7 @@ async function createResizedImage (file, size) {
     const x = (size - (width * ratio)) / 2
     const y = (size - (height * ratio)) / 2
   
-    ctx.drawImage(bitmap, 0, 0, width, height, x, y, width * ratio, height * ratio)
+    ctx.drawImage(bitmap, 0, 0, width, height, x, y)
   
     return new Promise(resolve => {
       canvas.toBlob(blob => {
