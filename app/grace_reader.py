@@ -71,8 +71,12 @@ def is_date(string, fuzzy=False):
 
 def find_addresses(full_text_array):
     # parse the image text as one big blob and
-    fulltext = " ".join(full_text_array)
+    print("*" * 10)
+    fulltext = "\n".join(full_text_array)
+    print(fulltext)
+    print("*" * 10)
     for address in pyap.parse(fulltext, country='US'):
+        print(address)
         grace_addr = address.as_dict()['full_street']
         if "24400" not in grace_addr and not "North" in grace_addr:
             return address
@@ -379,7 +383,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         
         new_pdf.write(path)
         fillpdfs.place_image(converted_jpeg_path, 0, 0, path,
-                             path2, 2, width=300, height=300)
+                             path2, 2, width=600, height=800)
         
         count += 1
         print(f"image receipt has been added, count is now {count}")
