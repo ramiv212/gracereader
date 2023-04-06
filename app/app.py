@@ -14,6 +14,8 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 # TODO always convert pdf to image to extract the text
 # TODO figure out if this line is even needed 
 #   if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
+# TODO PO Number is not auto filling 
+# TODO Image getting cropped in half sometimes
 
 def create_app():
     app = Flask(__name__)

@@ -218,8 +218,7 @@ def serialize_parsed_text(image_text):
                 if card_digits and len(card_digits) == 1:
                     requested_by = find_requested_by(card_digits[0])
 
-                if not (requested_by == ""):
-                    number = generate_po_number(requested_by)
+                number = generate_po_number(requested_by)
             
             if max_total_list:
                 receipt_total = max(max_total_list)
@@ -380,7 +379,7 @@ def add_receipt_to_pdf(receipt_image_or_pdf, count):
         
         new_pdf.write(path)
         fillpdfs.place_image(converted_jpeg_path, 0, 0, path,
-                             path2, 2, width=500, height=500)
+                             path2, 2, width=300, height=300)
         
         count += 1
         print(f"image receipt has been added, count is now {count}")

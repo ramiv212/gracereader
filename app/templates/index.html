@@ -171,13 +171,30 @@
 
       document.body.append(`${isIOS}`);
 
+      function displayImage(img) {
+        imgNode = document.createElement('img');
+        imgNode.src = URL.createObjectURL(img);
+        imgNode.style.width = "300px";
+        imgNode.onload = function() {
+          URL.revokeObjectURL(imgNode.src) // free memory
+        }
+        document.body.append(imgNode);
+      }
+
+      function displayBlobImage(blob) {
+        console.log("ran displayBlobImage")
+        var uri = URL.createObjectURL(blob);
+        var img = new Image();
+
+        img.src = uri;
+        console.log(img)
+        document.body.appendChild(img);
+      }
+
       function uploadImage(newImageBlob) {
 
         // create a new blob from the rotated image and then create a new file from it
         const uploadFile = new File([newImageBlob], "upload.webp");
-
-        document.body.append(uploadFile)
-        console.log(uploadFile)
 
         // create a new filelist, and add the new created file blob to it
         const newFileList = new DataTransfer();
@@ -196,29 +213,33 @@
         fileInputLabel.innerText = fileInputField.files[0].name;
         console.log(fileInputField.files[0].name)
 
-        if (fileInputField.files[0].name.split(".")[1] !== "pdf"){
+        //displayImage(fileInputField.files[0]);
+
+        let fileExtension = fileInputField.files[0].name.split(".")[1];
+        let fileExtensionIsPDF = fileExtension !== "pdf";
+
+        console.log(`Image extension is:${fileExtension} and. Is it PDF? ${!fileExtensionIsPDF}`)
+
+        if (fileExtensionIsPDF){
           loadImage(
             fileInputField.files[0],
             async (image, data) => {
+              document.body.append(`EXIF: ${data.exif}`)
               if (data.imageHead && data.exif && isIOS) {
                 // Reset Exif Orientation data:
                 loadImage.writeExifData(data.imageHead, data, "Orientation", 6);
                 image.toBlob(function (blob) {
-                  loadImage.replaceHead(blob, data.imageHead, function (newBlob) {
-                    uploadImage(newBlob)
+                  loadImage.replaceHead(blob, data.imageHead, async function (newBlob) {
+                    const newImageBlob = await createResizedImage(newBlob);
+                    uploadImage(newImageBlob)
                   });
                 }, "image/jpeg");
               } else {
                 const newImageBlob = await createResizedImage(image);
+                //displayBlobImage(newImageBlob)
                 uploadImage(newImageBlob)
               }
             },
-            {
-              minWidth: 900,
-              minheight: 1200,
-              contain: true,
-            }
-            // Options);
           );
         };
       };
