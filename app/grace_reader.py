@@ -1,36 +1,15 @@
 import io, os, shutil
-import pytesseract
-import cv2
-from dateutil.parser import parse
-import numpy as np
-import pyap
 from fillpdf import fillpdfs
-import PyPDF2
-from datetime import date
-import re
 from PIL import Image
 from pdf2image import convert_from_bytes
+import PyPDF2
+import re
 
+from parse.validation import file_extension_is_image
+from parse.parse import parse_image
+from parse.serialize import serialize_form_object
+from const import *
 
-VENDOR_NAMES = ['amazon', 'walmart']
-
-CARD_TO_NAME_DICT = {
-    '2149': 'Johny Hernandez'
-}
-
-VENDOR_TO_DEPT_DICT = {
-
-}
-
-VENDOR_TO_ACCT_DICT = {
-
-}
-
-PO_NUMBER_BY_PERSON = {
-    'Johny Hernandez': 1
-}
-
-DATE_OF_LAST_PO_GENERATION = date.today()
 
 def send_as_stream_and_delete(path):
     cache = io.BytesIO()
@@ -42,125 +21,6 @@ def send_as_stream_and_delete(path):
     return cache
 
 
-def file_extension_is_image(filename):
-    file_extension = filename.split(".")[1]
-
-    if file_extension == "png" or file_extension == "jpg" or file_extension == "jpeg" or file_extension == "webp":
-        print(file_extension)
-        return True, file_extension
-    elif file_extension == "pdf":
-        return False, file_extension
-    else:
-        return False,None
-
-
-def is_date(string, fuzzy=False):
-    """
-    Return whether the string can be interpreted as a date.
-
-    :param string: str, string to check for date
-    :param fuzzy: bool, ignore unknown tokens in string if True
-    """
-    try:
-        parse(string, fuzzy=fuzzy)
-        return True
-
-    except ValueError:
-        return False
-
-
-def find_addresses(full_text_array):
-    # parse the image text as one big blob and
-    print("*" * 10)
-    fulltext = "\n".join(full_text_array)
-    print(fulltext)
-    print("*" * 10)
-    for address in pyap.parse(fulltext, country='US'):
-        print(address)
-        grace_addr = address.as_dict()['full_street']
-        if "24400" not in grace_addr and not "North" in grace_addr:
-            return address
-
-
-def string_includes_month(string):
-    months_array = ["January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"]
-    if any(ext in string for ext in months_array):
-        return string
-
-
-def find_date(text_line):
-    non_slash_date_array = []
-
-    # check if there is a slash in the text line
-    if "/" in text_line and is_date(text_line):
-        if " " in text_line:
-            split_date = text_line.split()
-            for sub_item in split_date:
-                if "/" in sub_item:
-                    return sub_item
-            else:
-                return sub_item
-
-    # check if it's amazon-style date "March 15, 2023"
-    if string_includes_month(text_line) and "," in text_line and "shipped" not in text_line.lower() and "transactions" not in text_line:
-        non_slash_date_array.clear()
-        non_slash_date_string = ""
-        text_line_no_comma = text_line.replace(',', '')
-        split_date = text_line_no_comma.split()
-
-        for sub_item in split_date:
-            if string_includes_month(sub_item) or sub_item.isnumeric():
-                non_slash_date_array.append(sub_item)
-                non_slash_date_string = " ".join(non_slash_date_array)
-
-        return non_slash_date_string
-
-
-# basically just looks for the highest float it can find in the text blob
-# not very sophisticated right now
-def find_total(text_line, max_total_list):
-    split_sub_item = text_line.split()
-    for sub_item in split_sub_item:  
-        if (sub_item[0].isnumeric() or sub_item[0] == "$") and sub_item[-1].isnumeric() and "." in sub_item:
-            print(sub_item)
-            pattern = r"\$[\d,]+(?:\.\d{2})?"
-            regex = re.compile(pattern)
-            matches = regex.findall(sub_item)
-            for match in matches:
-                max_total_list.append(float(match.strip("$").replace(",","")))
-
-
-def find_card_digits(text_line):
-    if "****" in text_line or "last digits" in text_line.lower() or "XXXX" in text_line or "debit" in text_line.lower() or "xxx" in text_line:
-        string_without_letter_o_or_spaces = text_line.lower().replace("o",
-                                                                      "0").replace(" ", "")
-
-        matches = re.findall(r"\d{3,4}", string_without_letter_o_or_spaces)
-        if matches:
-            return matches
-
-
-def find_requested_by(card_digits):
-    if card_digits in CARD_TO_NAME_DICT:
-        return CARD_TO_NAME_DICT[card_digits]
-    else:
-        return ""
-
-
-def find_amex_purchase(text_line):
-    if "amex" in text_line.lower() or "american express" in text_line.lower() or "credit" in text_line.lower() or "card" in text_line.lower():
-        return True
-
-
-def find_vendors(text_line):
-    # if vendor name is in the text line
-    if any(ext in text_line.lower() for ext in VENDOR_NAMES):
-        split_text_line = text_line.split(" ")
-        for sub_text_item in split_text_line:
-            for vendor in VENDOR_NAMES:
-                if vendor in sub_text_item.lower():
-                    return vendor.capitalize()
 
 # if it is a new day, initialize all PO numbers to 1 for everyone
 def check_if_new_day(today,DATE_OF_LAST_PO_GENERATION):
@@ -170,188 +30,6 @@ def check_if_new_day(today,DATE_OF_LAST_PO_GENERATION):
 
     # Set today as the date of last PO generation
     DATE_OF_LAST_PO_GENERATION = date.today()
-
-
-def generate_po_number(ordered_by):
-    if ordered_by:
-        split_name = ordered_by.split(" ")
-        first_initial = split_name[0][0].upper()
-        second_initial = split_name[1][0].upper()
-
-        todays_date = date.today()
-        todays_date_as_str = todays_date.strftime("%m%d")
-
-        po_number = PO_NUMBER_BY_PERSON[ordered_by]
-        po_number_as_two_digits = f"{po_number:02}"
-
-        return f"{first_initial}{second_initial}{todays_date_as_str}{po_number_as_two_digits}"
-    
-    else:
-        return ""
-
-
-def serialize_parsed_text(image_text):
-    full_text_array = image_text.splitlines()
-    addresses = find_addresses(full_text_array)
-    receipt_date = ""
-    max_total_list = []
-    is_amex_purchase = False
-    vendor_name = ""
-    requested_by = ""
-    number = ""
-    receipt_total = ""
-
-    print(addresses)
-
-    if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
-        for text_line in full_text_array:
-            if text_line != "":
-                find_total(text_line, max_total_list)
-
-                if find_amex_purchase(text_line):
-                    is_amex_purchase = True
-
-                # fix this later. It returns none because this is being searched for overe every line of text
-                if not find_date(text_line) == None:
-                    receipt_date = find_date(text_line)
-
-                if find_vendors(text_line):
-                    vendor_name = find_vendors(text_line)
-
-                card_digits = find_card_digits(text_line)
-                if card_digits and len(card_digits) == 1:
-                    requested_by = find_requested_by(card_digits[0])
-
-                number = generate_po_number(requested_by)
-            
-            if max_total_list:
-                receipt_total = max(max_total_list)
-                
-
-        if not addresses:
-            return {
-                "NUMBER": number,
-                "VENDOR NAME": vendor_name,
-                "ORDERED BY": requested_by,
-                "Date2_af_date": receipt_date,
-                "Text1": receipt_total,
-                "Check Box10": is_amex_purchase,
-            }
-        else:
-            return {
-                "VENDOR NAME": vendor_name,
-                "ORDERED BY": requested_by,
-                "ADDRESS": addresses.as_dict()['full_street'],
-                "CITY": addresses.as_dict()['city'],
-                "STATE": addresses.as_dict()['region1'],
-                "ZIP": addresses.as_dict()['postal_code'],
-                "Date1_af_date": date.today().strftime("%m/%d/%y"),
-                "Date2_af_date": receipt_date,
-                "Text1": receipt_total,
-                "Check Box10": is_amex_purchase,
-            }
-
-
-def parse_image(image_file):
-    # each text string will be appended to this list to be serialized later
-    text_list = ""
-
-    # Read image from which text needs to be extracted
-    bytes_as_np_array = np.frombuffer(image_file, dtype=np.uint8)
-    img = cv2.imdecode(bytes_as_np_array, cv2.IMREAD_UNCHANGED)
-
-    # Convert the image to gray scale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # Performing OTSU threshold
-    # pipe is a bitwise OR
-    ret, thresh1 = cv2.threshold(
-        gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-
-    # Specify structure shape and kernel size.
-    # Kernel size increases or decreases the area
-    # of the rectangle to be detected.
-    # A smaller value like (10, 10) will detect
-    # each word instead of a sentence.
-    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
-
-    # Applying dilation on the threshold image
-    dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
-
-    # Finding contours
-    contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
-                                           cv2.CHAIN_APPROX_NONE)
-
-    # Creating a copy of image
-    im2 = img.copy()
-
-    # A text file is created and flushed
-    # file = open("recognized.txt", "w+")
-    # file.write("")
-    # file.close()
-
-    # Looping through the identified contours
-    # Then rectangular part is cropped and passed on
-    # to pytesseract for extracting text from it
-    # Extracted text is then written into the text file
-    for cnt in contours:
-        x, y, w, h = cv2.boundingRect(cnt)
-
-        # Drawing a rectangle on copied image
-        rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-        # Cropping the text block for giving input to OCR
-        cropped = im2[y:y + h, x:x + w]
-
-        # Open the file in append mode
-        # file = open("recognized.txt", "a")
-
-        # Apply OCR on the cropped image
-        text = pytesseract.image_to_string(cropped)
-
-        text_list = text_list + text
-
-    return serialize_parsed_text(text_list)
-
-
-def parse_pdf(pdf_file):
-    document = io.BytesIO(pdf_file)
-    # creating a pdf reader object
-    reader = PyPDF2.PdfReader(document)
-
-    # get the text of the first page
-    pdf_text = reader.pages[0].extract_text()
-
-    return serialize_parsed_text(pdf_text)
-
-
-def serialize_form_object(immutable_dict):
-    # fillpdfs.print_form_fields('static/PO.pdf', sort=False, page_number=None)
-    serialized_object = {}
-    for field in immutable_dict:
-        print(immutable_dict[field])
-        serialized_object[field] = immutable_dict[field]
-
-    # billing method checkbox
-    if 'billing-method' in immutable_dict:
-        serialized_object[immutable_dict['billing-method']] = "Yes"
-
-    # carrier checkbox
-    if 'carrier' in immutable_dict:
-        serialized_object[immutable_dict['carrier']] = "Yes"
-
-    # add space to account field
-    if 'Dropdown3' in immutable_dict:
-        split_value = immutable_dict['Dropdown3'].split("-")
-        serialized_object['Dropdown3'] = " -".join(split_value)
-
-    if not immutable_dict['ORDERED BY']:
-        serialized_object['ORDERED BY'] = ""
-
-    # set the date by the signature to be today's date
-    serialized_object["Date10_af_date"] = date.today().strftime("%m/%d/%y")
-
-    return serialized_object
 
 
 def add_receipt_to_pdf(receipt_image_or_pdf, count):
@@ -466,6 +144,7 @@ def get_receipt_file_extension():
 
 
 def create_pdf_po_document(immutable_dict):
+    print("RAN CREATE")
     # create an incrementing count for PO export
     count = 1
     input_pdf_path = os.path.join(os.getcwd(),"static/PO.pdf")
@@ -497,13 +176,13 @@ def create_pdf_po_document(immutable_dict):
 
     # rename the final pdf of the pipeline to the generated PO number
     path3 = os.path.join(os.getcwd(),f'static/PO{count}.pdf')
-    print(os.listdir("static"))
+    # print(os.listdir("static"))
 
     renamed_path = os.path.join(os.getcwd(),f"static/final/{finalized_po_filename}.pdf")
 
     os.rename(path3,renamed_path)
 
-    delete_generated_receipt_files()
+    # delete_generated_receipt_files()
 
     check_if_new_day(date.today(),DATE_OF_LAST_PO_GENERATION)
 
@@ -523,8 +202,6 @@ def export_to_file_named_receipt(read_file, extension):
 
 
 def process_as_image_or_pdf(file):
-
-
     filename = file.filename
     read_file = file.read()
 

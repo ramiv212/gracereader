@@ -5,17 +5,16 @@ from grace_reader import process_as_image_or_pdf,create_pdf_po_document,send_as_
 UPLOAD_FOLDER = '/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 
+# TODO test the daily po number reset
 # TODO refactor the date finding logic
 # TODO test a pdf receipt with many pages
 # TODO add valiation for adding a signature when someone writes in a name that does not exist
 # TODO add option to add signature manually
 # TODO make ordered_by be a dropdown??
 # TODO fixed dropdowns dont render the first time render button is pushed
-# TODO always convert pdf to image to extract the text
 # TODO figure out if this line is even needed 
 #   if 'TOTAL' in image_text or 'DEBIT' in image_text or 'Total' in image_text:
 # TODO maybe have ordered_by be filled by credit card OR name found
-# TODO clearavl estimate does not get clearavl address
 # TODO send to melinda button
 
 def create_app():
