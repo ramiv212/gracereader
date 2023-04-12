@@ -29,6 +29,7 @@ def serialize_parsed_text(image_text):
 
 
     for text_line in full_text_array:
+        print()
         if text_line != "":
 
             find_total(text_line,response_dict_object)
@@ -57,10 +58,10 @@ def serialize_parsed_text(image_text):
 
         if addresses:
             response_dict_object.set(
-                ADDRESS       = addresses.as_dict()['full_street'],
-                CITY          = addresses.as_dict()['city'],
-                STATE         = addresses.as_dict()['region1'],
-                ZIP           = addresses.as_dict()['postal_code'],
+                ADDRESS = addresses.as_dict()['full_street'],
+                CITY    = addresses.as_dict()['city'],
+                STATE   = addresses.as_dict()['region1'],
+                ZIP     = addresses.as_dict()['postal_code'],
             )
     
     response_dict_object.set(Date1_af_date = date.today().strftime("%m/%d/%y"))

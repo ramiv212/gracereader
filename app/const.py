@@ -21,3 +21,19 @@ PO_NUMBER_BY_PERSON = {
 
 # need to change this because this is obviously not a const
 DATE_OF_LAST_PO_GENERATION = date.today()
+
+
+FIND_CARD_VALUES = [
+    "****",
+    "last digits",
+    "debit",
+    "xxxx",
+    "xxx"
+]
+
+FIND_AMEX_PURCHASE_VALUES = [
+    "amex",
+    "american express",
+    "credit",
+    "card"
+]

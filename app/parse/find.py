@@ -18,9 +18,9 @@ def find_addresses(full_text_array):
         
 
 def string_includes_month(string):
-    months_array = ["January", "February", "March", "April", "May", "June",
+    MONTHS_ARRAY = ["January", "February", "March", "April", "May", "June",
                     "July", "August", "September", "October", "November", "December"]
-    if any(ext in string for ext in months_array):
+    if any(ext in string for ext in MONTHS_ARRAY):
         return string
 
 
@@ -67,7 +67,7 @@ def find_total(text_line,response_dict_object):
 
 
 def find_card_digits(text_line):
-    if "****" in text_line or "last digits" in text_line.lower() or "XXXX" in text_line or "debit" in text_line.lower() or "xxx" in text_line:
+    if any(ext in text_line.lower() for ext in FIND_CARD_VALUES):
         string_without_letter_o_or_spaces = text_line.lower().replace("o", "0").replace(" ", "")
 
         matches = re.findall(r"\d{3,4}", string_without_letter_o_or_spaces)
@@ -83,7 +83,7 @@ def find_requested_by(card_digits):
 
 
 def find_amex_purchase(text_line):
-    if "amex" in text_line.lower() or "american express" in text_line.lower() or "credit" in text_line.lower() or "card" in text_line.lower():
+    if any(ext in text_line.lower() for ext in FIND_AMEX_PURCHASE_VALUES):
         return True
 
 

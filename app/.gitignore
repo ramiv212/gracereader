@@ -31,3 +31,8 @@ PO3.pdf
 PO4.pdf
 
 ./static/*.pdf
+./static/*.jpg
+./static/*.bmp
+./static/*.png
+
+

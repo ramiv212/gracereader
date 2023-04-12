@@ -122,7 +122,7 @@ def add_signature_to_po_pdf(ordered_by, count):
 def delete_generated_receipt_files():
     list_of_files_in_static = os.listdir('static')
 
-    regex_str = f"(PO[0-9]|receipt)"
+    regex_str = f"(PO[0-9]|receipt.)"
 
     # Compile the regex pattern
     pattern = re.compile(regex_str)
@@ -132,6 +132,7 @@ def delete_generated_receipt_files():
 
     # Delete the receipt files that match the regex ("PO" followed by a single digit, OR a string of "receipt")
     for file in matches:
+        print(f"deleted {f'static/{file}'}")
         os.remove(f"static/{file}")
 
 
@@ -182,7 +183,7 @@ def create_pdf_po_document(immutable_dict):
 
     os.rename(path3,renamed_path)
 
-    # delete_generated_receipt_files()
+    delete_generated_receipt_files()
 
     check_if_new_day(date.today(),DATE_OF_LAST_PO_GENERATION)
 
